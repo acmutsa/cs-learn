@@ -4,5 +4,5 @@ export default async function Page({
     params: Promise<{ tagID: string }>;
 }) {
     const { tagID } = await params;
-    return <div>Creating new unit for course {tagID}</div>;
+    return <div>Managing tag: {tagID}</div>;
 }
