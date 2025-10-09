@@ -1,8 +1,10 @@
 import { createSafeActionClient } from "next-safe-action";
+import { getServerSession } from "next-auth";
 //import { getServerSession } from "next-auth/next";
 // when the user sign in
 async function getUserInfo() {
   
+  /* mcok user object
   const mockSession = {
     user: {
       id: "123",
@@ -12,14 +14,13 @@ async function getUserInfo() {
     },
   };
   var session = mockSession;
+  */
 
-  /*
+
   const session = await getServerSession();
-
   if (!session?.user){
     return null
   }
-    */
   return session.user; // i'm assuming the user object would look like this {id: "[0-9], role: "admin or null for regular user, ..."}
 }
 
