@@ -2,54 +2,38 @@ import { createSafeActionClient } from "next-safe-action";
 import { getServerSession } from "next-auth";
 //import { getServerSession } from "next-auth/next";
 // when the user sign in
-async function getUserInfo() {
-  
-  /* mcok user object
-  const mockSession = {
-    user: {
-      id: "123",
-      name: "Test User",
-      email: "test@example.com",
-      role: "admin", //change to "user" or "admin" to test permissions
-    },
-  };
-  var session = mockSession;
-  */
 
 
+
+async function getUser() {
   const session = await getServerSession();
-  if (!session?.user){
-    return null
-  }
-  return session.user; // i'm assuming the user object would look like this {id: "[0-9], role: "admin or null for regular user, ..."}
+  if (!session?.user) throw new Error("You must be signed in.");
+  return session.user;
 }
 
-//admin authentication
-async function getAdmin() {
-  const userInfo = await getUserInfo();
-  if (userInfo.role !== "admin"){
-    throw new Error("Not authorized");
-  } 
-  return userInfo;
+async function requireAdmin(user: any) {
+  if (user.role !== "admin") throw new Error("Not authorized.");
 }
 
-//Public Access (when not signed in)
-export const publicAction = createSafeActionClient();
+// Base clients
+export const actionClient = createSafeActionClient();
 
-
-// Protected — must be logged in
-export const protectedAction = createSafeActionClient({
-  async middleware() {
-    const user = await getUserInfo();
-    if (!user) throw new Error("You must be signed in.");
-    return { user };
-  },
+export const protectedClient = actionClient.use(async () => {
+  const user = await getUser();
+  return { user };
 });
 
-// Admin — must be admin
-export const adminAction = createSafeActionClient({
-  async middleware() {
-    const user = await getAdmin();
-    return { user };
-  },
+export const adminClient = protectedClient.use(async ({ user }) => {
+  await requireAdmin(user);
+  return { user };
 });
+
+// Example usage
+import { z } from "zod";
+
+//say hi to the user
+export const greetAction = protectedClient
+  .input(z.object({ name: z.string() }))
+  .action(async ({ parsedInput, user }) => {
+    return { message: `Hello, ${parsedInput.name}!`, user };
+  });
