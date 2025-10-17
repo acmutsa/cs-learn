@@ -45,9 +45,14 @@ export const protectedClient = actionClient.use(async ({ next }) => {
       _errors: ["User data not found."],
     });
   }
+  if (!roles.includes(userData.role)) {
+    return returnValidationErrors(z.null(), {
+      _errors: ["Invalid user role."],
+    });
+  }
   return next({
     ctx: {
-      userRole: userData.role as (typeof roles)[number],
+      userRole: userData.role,
       userId: user.id,
     },
   });
