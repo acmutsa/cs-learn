@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "react-hook-form": "^7.63.0",
+    "zod": "^4.1.11"
     "@libsql/client": "^0.15.15",
     "drizzle-orm": "^0.44.6",
     "next": "15.5.4",
