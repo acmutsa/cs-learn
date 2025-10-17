@@ -1,8 +1,8 @@
 export default async function Page({
-    params,
+  params,
 }: {
-    params: Promise<{ courseId: string }>;
+  params: Promise<{ courseId: string }>;
 }) {
-    const { courseId } = await params;
-    return <div>Managing tag: {courseId}</div>;
+  const { courseId } = await params;
+  return <div>Managing tag: {courseId}</div>;
 }
