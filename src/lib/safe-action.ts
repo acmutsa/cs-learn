@@ -6,7 +6,7 @@ import {
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { headers } from "next/headers";
-import { roles } from "./types";
+import { Role, roles } from "./types";
 import { user_data } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";

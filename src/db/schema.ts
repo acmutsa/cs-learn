@@ -8,7 +8,7 @@ export const user_data = sqliteTable("user_data", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  role: text({ enum: roles }).notNull(),
+  role: text({ enum: roles }).notNull().default("user"),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -17,3 +17,5 @@ export const user_data = sqliteTable("user_data", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export * from "./auth-schema";
