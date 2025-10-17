@@ -15,6 +15,13 @@
       "when": 1760727147673,
       "tag": "0001_mean_red_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1760733308134,
+      "tag": "0002_closed_avengers",
+      "breakpoints": true
     }
   ]
 }
