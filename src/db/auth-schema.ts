@@ -9,7 +9,6 @@ export const users = sqliteTable("users", {
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
-  role: text({ enum: roles }).notNull().default("user"),
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
