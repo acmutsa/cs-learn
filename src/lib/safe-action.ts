@@ -7,9 +7,6 @@ import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { headers } from "next/headers";
 import { Role, roles } from "./types";
-import { user_data } from "@/db/schema";
-import { db } from "@/db";
-import { eq } from "drizzle-orm";
 //import { getServerSession } from "next-auth/next";
 // when the user sign in
 
@@ -37,22 +34,14 @@ export const protectedClient = actionClient.use(async ({ next }) => {
       _errors: ["Unauthenticated"],
     });
   }
-  const userData = await db.query.user_data.findFirst({
-    where: eq(user_data.userId, user.id),
-  });
-  if (!userData) {
-    return returnValidationErrors(z.null(), {
-      _errors: ["User data not found."],
-    });
-  }
-  if (!roles.includes(userData.role)) {
+  if (!roles.includes(user.role as Role)) {
     return returnValidationErrors(z.null(), {
       _errors: ["Invalid user role."],
     });
   }
   return next({
     ctx: {
-      userRole: userData.role,
+      userRole: user.role,
       userId: user.id,
     },
   });
