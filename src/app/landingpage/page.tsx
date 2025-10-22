@@ -1,7 +1,8 @@
+
 const landingPage = () => {
     return(
-        <div>
-            <h1>Welcome to the landing page!</h1>
+        <div className="text-white min-h-screen">
+            Welcome to the landing page!
         </div>
     )
 }
