@@ -6,14 +6,20 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.63.0",
+    "zod": "^4.1.11",
     "@libsql/client": "^0.15.15",
     "drizzle-orm": "^0.44.6",
     "next": "15.5.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "next-safe-action": "8.0.11",
     "web": "link:@libsql/client/web",
     "better-auth": "^1.3.26"
   },
