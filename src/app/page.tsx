@@ -6,7 +6,7 @@ export default function Home() {
   var isSignedIn = false;
   var mockUser = null;
 
-  /*if testing just commented out this block of code */
+  /*if testing just commented out this block of code S
   isSignedIn = true;
   mockUser = {
     name: "Frieren",
@@ -15,7 +15,7 @@ export default function Home() {
     profileHref: "/profile",
     coursesHref: "/user/courses",
     historyHref: "/courses/history",
-  }
+  }*/
   ///////////////////
 
   return (
