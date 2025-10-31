@@ -20,7 +20,7 @@ export default function LessonPage() {
   // --- Dummy data until DB is wired ---
   const course = {
     id: "course-ux101",
-    title: "Intro to Networks",
+    title: "Intro to Web Development",
     unitTitle: "Unit 1: Fundamentals",
     progress: 45,
   };
@@ -28,27 +28,22 @@ export default function LessonPage() {
   const lesson = {
     id: "lesson-10",
     number: 10,
-    title: "IP Addressing & Subnetting",
+    title: "Next.js Application fundamentals",
     duration: "14:36",
     summary:
-      "Learn how to calculate subnets, CIDR notation, and configure interfaces. We'll practice with a small 3-router lab.",
-    attachments: [
-      { id: "a1", name: "Slides - Subnetting 101.pdf", size: "2.3 MB" },
-      { id: "a2", name: "Lab Topology.pkt", size: "140 KB" },
-      { id: "a3", name: "Worksheet - CIDR Practice.pdf", size: "410 KB" },
-    ],
+      "Learn how to build a simple application with nextjs, from setting up the project to deploying it.",
     resources: [
-      { id: "r1", label: "RFC 4632 - Classless Inter-Domain Routing (CIDR)", href: "#" },
-      { id: "r2", label: "VLSM Calculator", href: "#" },
+      { id: "r1", label: "Next js Tutorial", href: "#" },
+      { id: "r2", label: "Tailwindcss docs", href: "#" },
     ],
   };
 
   const unitLessons = [
-    { id: "l1", title: "What is a Network?", duration: "08:24", status: "done" },
-    { id: "l2", title: "OSI vs TCP/IP Models", duration: "12:10", status: "done" },
-    { id: "l3", title: "Binary Basics", duration: "09:03", status: "done" },
-    { id: "l4", title: "IP Addressing & Subnetting", duration: "14:36", status: "current" },
-    { id: "l5", title: "Routing Primer", duration: "16:50", status: "locked" },
+    { id: "l1", title: "What is a NextJs?", duration: "08:24", status: "done" },
+    { id: "l2", title: "Part 2", duration: "12:10", status: "done" },
+    { id: "l3", title: "Part 3", duration: "09:03", status: "done" },
+    { id: "l4", title: "Part 4", duration: "14:36", status: "current" },
+    { id: "l5", title: "Part 5", duration: "16:50", status: "locked" },
   ];
 
   return (
@@ -120,7 +115,7 @@ export default function LessonPage() {
                 </CardHeader>
                 <CardContent>
                     <p className="mb-2 text-sm leading-relaxed">
-                        Welcome to this lesson on IP Addressing and Subnetting. In this video, we will explore the fundamentals of IP addressing, including how to calculate subnets and understand CIDR notation. By the end of this lesson, you'll be able to configure interfaces and practice subnetting with a small 3-router lab.
+                        Welcome to this lesson on React components. In this video, we will explore the fundamentals of building user interfaces using React. React is a popular JavaScript library for building interactive and dynamic web applications...
                     </p>
                 </CardContent>
               </Card>
