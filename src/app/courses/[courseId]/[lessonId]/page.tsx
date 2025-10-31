@@ -4,15 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Play, Download, FileText, CheckCircle2, ChevronDown, ExternalLink, Paperclip, BookOpen, NotebookPen, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Captions, Download, FileText, CheckCircle2, ChevronDown, ExternalLink, Paperclip, BookOpen, NotebookPen, ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Framework-only lesson page using dummy data.
@@ -109,35 +107,21 @@ export default function LessonPage() {
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="attachments" className="w-full">
+          <Tabs defaultValue="transcript" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="attachments" className="gap-2"><Paperclip className="h-4 w-4"/>Attachments</TabsTrigger>
+              <TabsTrigger value="transcript" className="gap-2"><Captions className="h-4 w-4"/>Transcript</TabsTrigger>
               <TabsTrigger value="notes" className="gap-2"><NotebookPen className="h-4 w-4"/>Notes</TabsTrigger>
               <TabsTrigger value="resources" className="gap-2"><BookOpen className="h-4 w-4"/>Resources</TabsTrigger>
             </TabsList>
-            <TabsContent value="attachments" className="mt-4">
+            <TabsContent value="transcript" className="mt-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Lesson files</CardTitle>
-                  <CardDescription>Download reference materials for this lesson.</CardDescription>
+                  <CardTitle className="text-base">Lesson Transcript</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="divide-y">
-                    {lesson.attachments.map((f) => (
-                      <li key={f.id} className="flex items-center justify-between py-3">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5" />
-                          <div>
-                            <p className="text-sm font-medium leading-none">{f.name}</p>
-                            <p className="text-xs text-muted-foreground">{f.size}</p>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" className="gap-2">
-                          <Download className="h-4 w-4"/> Download
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
+                    <p className="mb-2 text-sm leading-relaxed">
+                        Welcome to this lesson on IP Addressing and Subnetting. In this video, we will explore the fundamentals of IP addressing, including how to calculate subnets and understand CIDR notation. By the end of this lesson, you'll be able to configure interfaces and practice subnetting with a small 3-router lab.
+                    </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -224,26 +208,7 @@ export default function LessonPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Quick quiz (coming soon)</CardTitle>
-              <CardDescription>Short checks for understanding after each lesson.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-start gap-2">
-                  <Checkbox id="q1" />
-                  <label htmlFor="q1" className="text-sm leading-tight">Private IPv4 ranges include 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.</label>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Checkbox id="q2" />
-                  <label htmlFor="q2" className="text-sm leading-tight">CIDR notation expresses an IP prefix length after a slash.</label>
-                </div>
-                <Separator className="my-2" />
-                <Button size="sm" disabled>Submit (disabled)</Button>
-              </div>
-            </CardContent>
-          </Card>
+          
         </aside>
       </div>
     </div>
