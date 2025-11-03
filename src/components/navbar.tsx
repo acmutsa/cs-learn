@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image"; // Optional: if using Next.js Image optimization
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 type NavigationProps = {
     isSignedIn: boolean;
@@ -28,45 +28,45 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
 
   return (
     <div className="p-5" >
-      <nav className="bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 w-full flex justify-between items-center px-10 py-6 text-white rounded-md border shadow-md">
+      <nav className="bg-background text-foreground w-full flex justify-between items-center px-10 py-6 rounded-md border">
         {/* Logo */}
         <Link href="/">
-          <h1 className="text-4xl font-bold hover:text-cyan-300 hover:drop-shadow-[0_0_30px_rgba(236,72,153,0.9)]  transition-all duration-300 ease-in-out">
+          <h1 className="text-4xl font-bold hover:text-gray-500 transition-all duration-300 ease-in-out">
             ACM Learn
           </h1>
         </Link>
 
         {/* Navigation Links */}
-        <ul className="flex items-center gap-8 font-semibold">
+        <ul className="flex items-center gap-8 font-semibold text-lg">
           <li>
-            <button className="text-lg pr-5 hover:text-cyan-300  transition-all duration-300 ease-in-out">
+            <Button className="text-lg pr-5 bg-white text-foreground hover:text-gray-300 transition-all duration-300">
               <Link
               href="/explore"
               
               >Explore</Link>
-            </button>
+            </Button>
           </li>
           <li>
-            <button>
+            <Button className=" text-lg pr-5 bg-white text-foreground  hover:text-gray-300 transition-all duration-300">
               <Link
                 href="/categories"
-                className="text-lg pr-5 hover:text-cyan-300  transition-all duration-300 ease-in-out"
+                
               >
                 Categories
               </Link>
-            </button>
+            </Button>
           </li>
           {isSignedIn && User ? (
             <>
             
           <li>
-            <button className="px-4 py-2 text-sm border  border-white rounded-md transition-all duration-300 hover:bg-gradient-to-r hover:from-pink-300 hover:to-purple-300  hover:text-blue-600 hover:border-blue-600">
+            <Button className="text-lg px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
             <Link
               href="/logout"
             >
               Logout
             </Link>
-            </button>
+            </Button>
           </li>
           {/* Profile Pic Placeholder */}
           <li>
@@ -109,19 +109,19 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
           ) : (
             <>
             <li>
-            <button className="px-4 py-2 text-sm border  border-white rounded-md transition-all duration-300 hover:bg-gradient-to-r hover:from-pink-300 hover:to-purple-300  hover:text-blue-600 hover:border-blue-600">
+            <Button className="px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
             <Link
               href="/login"
             >
               Login
             </Link>
-            </button>
+            </Button>
 
           </li>
           <li>
           <DropdownMenu>
           <DropdownMenuTrigger asChild>
-          <Avatar className="block w-12 h-12 hover:drop-shadow-[1px_1px_40px_rgba(255,215,100,1)] rounded-full overflow-hidden border-2 border-white hover:border-blue-300 transition-all duration-300">
+          <Avatar className="block w-12 h-12 rounded-full overflow-hidden border-2 border-white hover:border-blue-300 transition-all duration-300">
               <AvatarImage
                 src={ "/user.png"}
                 alt="Guest profile"
@@ -133,13 +133,13 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-auto">
             <DropdownMenuItem asChild className="">
-              <button className="px-4 py-2 text-sm border  border-white rounded-md transition-all duration-300 hover:bg-gradient-to-r hover:from-pink-300 hover:to-purple-300  hover:text-blue-600 hover:border-blue-600">
+              <Button className="px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
             <Link
               href="/login"
             >
               Login
             </Link>
-            </button>
+            </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
           </DropdownMenu>
