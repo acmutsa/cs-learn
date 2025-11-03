@@ -28,10 +28,10 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
 
   return (
     <div className="p-5" >
-      <nav className="bg-background text-foreground w-full flex justify-between items-center px-10 py-6 rounded-md border">
+      <nav className="bg-background w-full flex justify-between items-center px-10 py-6 rounded-md border border-border text-foreground">
         {/* Logo */}
         <Link href="/">
-          <h1 className="text-4xl font-bold hover:text-gray-500 transition-all duration-300 ease-in-out">
+          <h1 className="text-3xl font-bold hover:text-primary transition-colors">
             ACM Learn
           </h1>
         </Link>
@@ -39,7 +39,7 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
         {/* Navigation Links */}
         <ul className="flex items-center gap-8 font-semibold text-lg">
           <li>
-            <Button className="text-lg pr-5 bg-white text-foreground hover:text-gray-300 transition-all duration-300">
+            <Button className="text-lg pr-5 bg-transparent text-foreground hover:text-gray-300 transition-all duration-300">
               <Link
               href="/explore"
               
@@ -47,7 +47,7 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
             </Button>
           </li>
           <li>
-            <Button className=" text-lg pr-5 bg-white text-foreground  hover:text-gray-300 transition-all duration-300">
+            <Button className=" text-lg pr-5 bg-transparent text-foreground  hover:text-gray-300 transition-all duration-300">
               <Link
                 href="/categories"
                 
