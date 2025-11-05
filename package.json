@@ -10,13 +10,15 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:migrate:turso": "tsx src/db/migrate.turso.ts"
   },
   "trustedDependencies": [
     "better-sqlite3",
     "esbuild"
   ],
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "better-auth": "^1.3.26",
     "better-sqlite3": "^12.4.1",
     "drizzle-orm": "^0.44.7",
@@ -32,6 +34,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.6",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
