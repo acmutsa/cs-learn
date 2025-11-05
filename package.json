@@ -7,11 +7,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate:turso": "tsx src/db/migrate.turso.ts"
   },
   "trustedDependencies": [
     "better-sqlite3",
@@ -19,13 +19,21 @@
   ],
   "dependencies": {
     "@libsql/client": "^0.15.15",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
     "better-auth": "^1.3.26",
-    "better-sqlite3": "^12.4.1",
-    "drizzle-orm": "^0.44.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.44.6",
+    "lucide-react": "^0.546.0",
     "next": "15.5.4",
+    "next-safe-action": "8.0.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "zod": "^4.1.12"
+    "react-hook-form": "^7.63.0",
+    "tailwind-merge": "^3.3.1",
+    "web": "link:@libsql/client/web",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -35,11 +43,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.6",
+    "drizzle-kit": "^0.31.5",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
+    "tw-animate-css": "^1.4.0",
     "typescript": "^5"
   }
 }

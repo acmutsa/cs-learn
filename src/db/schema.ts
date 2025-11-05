@@ -258,3 +258,5 @@ export type NewLesson       = InferInsertModel<typeof lessons>;
 
 export type Attachment      = InferSelectModel<typeof attachments>;
 export type NewAttachment   = InferInsertModel<typeof attachments>;
+
+export * from "./auth-schema";
