@@ -4,5 +4,5 @@ export default async function Page({
     params: Promise<{ courseId: string }>;
 }) {
     const { courseId } = await params;
-    return <div>Managing lesson: {courseId} for course {courseId}</div>;
+    return <div>Edit page for courseID: {courseId}</div>;
 }
