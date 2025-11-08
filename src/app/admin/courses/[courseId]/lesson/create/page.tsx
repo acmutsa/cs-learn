@@ -9,16 +9,14 @@ export default async function CreateLessonPage({
   const { courseId } = await params;
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold">Create Lesson</h1>
-        <p className="text-sm text-neutral-500">
-          Course ID: <span className="font-mono">{courseId}</span>
-        </p>
-      </header>
+    <div className="container mx-auto max-w-5xl space-y-6 p-6">
+      <h1 className="text-2xl font-semibold tracking-tight">New Lesson</h1>
+      <p className="text-sm text-muted-foreground">
+        Create a lesson for course <span className="font-mono">{courseId}</span>.
+      </p>
 
-      {/* placeholder */}
-      <div className="rounded-lg border bg-white p-6 text-sm text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">
+      {/* Placeholder until LessonForm is added */}
+      <div className="rounded-lg border bg-card p-6 text-sm text-foreground/80 dark:border-neutral-800">
         Form coming next: unit dropdown, media type, content URL/blob, create-unit modal.
       </div>
     </div>
