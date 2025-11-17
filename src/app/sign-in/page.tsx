@@ -1,3 +1,150 @@
+// src/app/sign-in/page.tsx
+"use client"
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { Loader2, Key } from "lucide-react";
+import { signIn } from "@/lib/auth-client";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import Header from "@/components/LoginHeader";
+import { useRouter } from "next/navigation";
+
 export default function Page() {
-  return <div>This is the sign-in page</div>;
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  return (
+    <div>
+      < Header />
+      
+      <div className="flex min-h-[80vh] items-center justify-center pb-53">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-lg text-center md:text-xl">Sign In</CardTitle>
+            <CardDescription className="text-xs text-center md:text-sm">
+              Enter your email below to login to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                    value={email}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <Link
+                        href="#"
+                        className="ml-auto inline-block text-sm underline"
+                      >
+                        Forgot your password?
+                      </Link>
+                  </div>
+
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="password"
+                    autoComplete="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="remember"
+                      onClick={() => {
+                        setRememberMe(!rememberMe);
+                      }}
+                    />
+                    <Label htmlFor="remember">Remember me</Label>
+                  </div>
+
+              
+
+              <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
+                  onClick={async () => {
+                    await signIn.email(
+                      { email, password },
+                      {
+                        onRequest: () => setLoading(true),
+                        
+                        onSuccess: () => {
+                          router.push("/dashboard");
+                        },
+
+                        onResponse: () => setLoading(false),
+                      }
+                    );
+                  }}
+                >
+                  {loading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <p> Login </p>
+                  )}
+                  </Button>
+
+              
+
+              
+            </div>
+          </CardContent>
+          <CardFooter>
+              <div className="flex justify-center w-full border-t py-4">
+                <p className="text-center text-xs text-neutral-500">
+                  Secured by{" "}
+                  <Link
+                    href="https://better-auth.com"
+                    className=""
+                    target="_blank"
+                  >
+                    <span className="text-orange-400 cursor-pointer">
+                      better-auth.
+                    </span>
+                  </Link>
+                </p>
+              </div>
+              <div className="flex justify-center w-full border-t py-4">
+                <p className="text-center text-xs text-neutral-500">
+                Don't Have An Account? {" "}
+                  <Link
+                    href="/sign-up"
+                    className="underline"
+                  >
+                    <span className="dark:text-white/70 cursor-pointer">
+                      Sign Up!
+                    </span>
+                  </Link>
+                </p>
+              </div>
+            </CardFooter>
+        </Card>
+      </ div>
+    </ div>
+  );
 }

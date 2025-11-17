@@ -3,6 +3,7 @@ import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 
+
 async function main() {
   const sqlite = new Database("./data/app.db");
   sqlite.pragma("foreign_keys = ON");

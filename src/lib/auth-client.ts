@@ -1,3 +1,4 @@
+// src/lib/auth-client.ts
 import { createAuthClient } from "better-auth/client";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { auth } from "./auth";
@@ -6,3 +7,5 @@ export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL!,
   plugins: [inferAdditionalFields<typeof auth>()],
 });
+
+export const { signIn, signUp, useSession } = createAuthClient()

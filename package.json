@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "tsx src/db/migrate.ts",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx src/db/seed.ts",
+    "db:migrate:turso": "tsx src/db/migrate.turso.ts"
   },
   "trustedDependencies": [
     "better-sqlite3",
@@ -20,11 +21,14 @@
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "better-auth": "^1.3.26",
+    "better-sqlite3": "^12.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.6",
@@ -34,6 +38,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.63.0",
+    "shadcn": "^3.5.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "web": "link:@libsql/client/web",
     "zod": "^4.1.11"

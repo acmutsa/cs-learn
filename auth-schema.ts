@@ -1,7 +1,5 @@
-// src/db/auth-schema.ts
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { roles } from "@/lib/types";
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
@@ -11,11 +9,6 @@ export const users = sqliteTable("users", {
     .default(false)
     .notNull(),
   image: text("image"),
-
-  role: text("role", { enum: roles })
-    .notNull()
-    .default("student"),
-
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -23,6 +16,7 @@ export const users = sqliteTable("users", {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  role: text("role").default("user").notNull(),
 });
 
 export const sessions = sqliteTable("sessions", {

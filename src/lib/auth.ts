@@ -1,3 +1,4 @@
+// src/lib/auth.ts
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -11,7 +12,7 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "user",
-        input: false, // don't allow user to set role
+        input: false,
       },
     },
   },
