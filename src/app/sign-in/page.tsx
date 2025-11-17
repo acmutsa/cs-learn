@@ -94,7 +94,7 @@ export default function Page() {
                         onRequest: () => setLoading(true),
                         
                         onSuccess: () => {
-                          router.push("/dashboard");
+                          router.push("/home");
                         },
 
                         onResponse: () => setLoading(false),
