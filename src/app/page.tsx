@@ -4,9 +4,10 @@ import Navigation from "@/components/navbar";
 import AutoSignInTestComponent from "@/components/autoSignIn";
 export default function Home() {
   return (
-    <div>
-<div>I suppose tis is the main page</div>
- <AutoSignInTestComponent />
- </div>
+    <div className="parent">
+      <div>I suppose tis is the main page</div>
+{/*
+    <AutoSignInTestComponent />
+  */}  </div>
   );
 }

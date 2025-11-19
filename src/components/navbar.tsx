@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
-
 const { useSession, signOut } = authClient;
 
 export default function Navigation() {
