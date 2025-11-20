@@ -11,7 +11,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/server/users";
+import { signIn } from "@/actions/authentication";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -81,14 +81,17 @@ export default function SignIn() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-                <Checkbox
-                  id="remember"
-                  onClick={() => {
-                    setRememberMe(!rememberMe);
-                  }}
-                />
-                <Label htmlFor="remember">Remember me</Label>
+            <div className="flex justify-between items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="remember"
+                    onClick={() => {
+                      setRememberMe(!rememberMe);
+                    }}
+                  />
+                  <Label htmlFor="remember">Remember me</Label>
+                </div>
+                <Link href="/sign-up" className="text-sm text-blue-300 hover:text-blue-500">Sign Up</Link>
               </div>
           <Button type="submit" className="w-full" disabled={loading} onClick={handleSignIn}>
               {loading ? (
