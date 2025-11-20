@@ -1,80 +1,66 @@
+// src/app/admin/courses/[courseId]/lesson/create/actions.ts
 "use server";
 
-import { z } from "zod";
-import { db } from "@/db";
-import { lessons, units, mediaTypeValues } from "@/db/schema";
-import { adminClient } from "@/lib/safe-action";
-import { asc, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
-// ----- Zod Schemas -----
-// Create a lesson that belongs to a unit.
-// Exactly one of (contentUrl, contentBlobId) must be present.
-export const CreateLessonSchema = z
-  .object({
-    unitId: z.coerce.number().int().min(1, "Unit is required"),
-    mediaType: z.enum(mediaTypeValues),
-    contentUrl: z.string().url().optional().or(z.literal("").transform(() => undefined)),
-    contentBlobId: z.coerce.number().int().optional(),
-    metadata: z.string().optional(), // JSON string (we'll default "{}" on insert)
-    position: z.coerce.number().int().min(1).optional(),
-  })
-  .refine(
-    (v) => !!v.contentUrl !== !!v.contentBlobId,
-    "Provide either a Content URL or a Content Blob, not both."
-  );
+import { db } from "@/db/index";
+import { units, lessons } from "@/db/schema";
+import {
+  lessonFormSchema,
+  createUnitSchema,
+  type LessonFormSchema,
+  type CreateUnitSchema,
+} from "@/lib/lesson";
+import { actionClient } from "@/lib/safe-action";
 
-export const CreateUnitSchema = z.object({
-    courseId: z.string().min(1),       // units.courseId is TEXT in schema
-    title: z.string().min(2, "Unit title must be at least 2 characters"),
-    position: z.coerce.number().int().min(1).optional(),
-});
-
-// ----- Actions -----
-export const createLesson = adminClient
-  .schema(CreateLessonSchema)
+// Create lesson
+export const createLessonAction = actionClient
+  .schema(lessonFormSchema)
   .action(async ({ parsedInput }) => {
-    const { unitId, mediaType, contentUrl, contentBlobId, metadata, position } = parsedInput;
+    const { title, description, unitId, courseId } = parsedInput;
 
-    const [row] = await db
-      .insert(lessons)
-      .values({
-        unitId,                           // INTEGER FK
-        mediaType,                        // enum value
-        contentUrl: contentUrl ?? null,   // exactly one of the two
-        contentBlobId: contentBlobId ?? null,
-        metadata: metadata ?? "{}",       // store JSON string
-        position: position ?? 1,
-      })
-      .returning({ id: lessons.id });
+    // Build metadata JSON stored in lessons.metadata
+    const metadata = JSON.stringify({
+      title,
+      description: description ?? "",
+    });
 
-    return { ok: true as const, lessonId: row.id };
+    await db.insert(lessons).values({
+      unitId,              // integer
+      metadata,            // JSON string
+      contentUrl: "http://placeholder",      // satisfy CHECK (exactly one of contentUrl/contentBlobId)
+      // mediaType & position are using DB defaults:
+      // mediaType: "markdown"
+      // position: 1
+    });
+
+    // Revalidate course page or lessons list
+    revalidatePath(`/admin/courses/${courseId}`);
+
+    return { success: true };
   });
 
-export const createUnit = adminClient
-  .schema(CreateUnitSchema)
+// Create unit (for the modal)
+export const createUnitAction = actionClient
+  .schema(createUnitSchema)
   .action(async ({ parsedInput }) => {
-    const { courseId, title, position } = parsedInput;
+    const { title, courseId } = parsedInput;
 
-    const [row] = await db
+    // Minimal insert: courseId (text) + title; position defaults to 1
+    const [unit] = await db
       .insert(units)
       .values({
-        courseId,                // TEXT (matches schema)
+        courseId,
         title,
-        position: position ?? 1,
       })
-      .returning({ id: units.id, title: units.title, courseId: units.courseId });
+      .returning();
 
-    return { ok: true as const, unit: { id: row.id, name: row.title ?? "Untitled Unit" } };
+    revalidatePath(`/admin/courses/${courseId}`);
+
+    return {
+      success: true,
+      unitId: unit.id,
+      unitTitle: unit.title,
+    };
   });
-
-// ----- Loader -----
-export async function getUnitsForCourse(courseId: string) {
-  // units.courseId is TEXT; route param is string -> compare as string
-  const rows = await db
-    .select({ id: units.id, name: units.title })
-    .from(units)
-    .where(eq(units.courseId, courseId))
-    .orderBy(asc(units.position), asc(units.title));
-
-  return rows.map((r) => ({ id: r.id.toString(), name: r.name ?? "Untitled Unit" }));
-}
