@@ -73,9 +73,11 @@ export function CreateUnitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create new unit</DialogTitle>
+          <DialogTitle className="text-lg">
+            Create new unit
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -87,7 +89,10 @@ export function CreateUnitDialog({
                 <FormItem>
                   <FormLabel>Unit title</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Introduction" {...field} />
+                    <Input
+                      placeholder="e.g. Week 1: Introduction"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +105,7 @@ export function CreateUnitDialog({
               </p>
             )}
 
-            <DialogFooter>
+            <DialogFooter className="pt-2">
               <Button
                 type="button"
                 variant="outline"
@@ -118,4 +123,3 @@ export function CreateUnitDialog({
     </Dialog>
   );
 }
-

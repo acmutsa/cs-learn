@@ -54,18 +54,19 @@ export function CreateLessonForm({
   const [units, setUnits] = React.useState<UnitOption[]>(initialUnits);
   const [openUnitDialog, setOpenUnitDialog] = React.useState(false);
 
-    const form = useForm<LessonFormSchema>({
-        resolver: zodResolver(lessonFormSchema) as any,
-        defaultValues: {
-            title: "",
-            description: "",
-            unitId: 0,
-            courseId,
-            mediaType: "markdown", // sensible default
-            contentUrl: "",
-        },
-    }) as any;
-
+  // Relaxed typing around resolver to avoid RHF + zod generic noise,
+  // while still keeping LessonFormSchema as the form's value type.
+  const form = useForm<LessonFormSchema>({
+    resolver: zodResolver(lessonFormSchema) as any,
+    defaultValues: {
+      title: "",
+      description: "",
+      unitId: 0,
+      courseId,
+      mediaType: "markdown",
+      contentUrl: "",
+    },
+  }) as any;
 
   const { execute, status, result } = useAction(createLessonAction, {
     onSuccess: ({ data }) => {
@@ -109,91 +110,99 @@ export function CreateLessonForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 max-w-xl"
+          className="space-y-8"
         >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Lesson title</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. What is a variable?" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Top section: basic info */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Lesson title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Introduction to Variables"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Short summary of this lesson..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Short summary of what this lesson covers..."
+                      className="min-h-[96px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Content section */}
+          <div className="grid gap-6 md:grid-cols-2 rounded-lg border border-dashed border-border/60 bg-muted/40 p-4">
+            <FormField
+              control={form.control}
+              name="mediaType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content type</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a content type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="youtube">YouTube video</SelectItem>
+                      <SelectItem value="markdown">Markdown page</SelectItem>
+                      <SelectItem value="pdf">PDF</SelectItem>
+                      <SelectItem value="image">Image</SelectItem>
+                      <SelectItem value="audio">Audio</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="contentUrl"
+              render={({ field }) => (
+                <FormItem className="md:col-span-1">
+                  <FormLabel>Content URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* Hidden courseId so it gets sent along with the form */}
           <input type="hidden" {...form.register("courseId")} value={courseId} />
 
-          {/* Media type */}
-            <FormField
-            control={form.control}
-            name="mediaType"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>Content type</FormLabel>
-                <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                >
-                    <FormControl>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a content type" />
-                    </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                    <SelectItem value="youtube">YouTube video</SelectItem>
-                    <SelectItem value="markdown">Markdown page</SelectItem>
-                    <SelectItem value="pdf">PDF</SelectItem>
-                    <SelectItem value="image">Image</SelectItem>
-                    <SelectItem value="audio">Audio</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-
-            {/* Main content URL */}
-            <FormField
-            control={form.control}
-            name="contentUrl"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>Content URL</FormLabel>
-                <FormControl>
-                    <Input
-                    placeholder="https://..."
-                    {...field}
-                    />
-                </FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-
-
+          {/* Unit selection */}
           <FormField
             control={form.control}
             name="unitId"
@@ -231,7 +240,7 @@ export function CreateLessonForm({
             </p>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex items-center justify-end gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
