@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SQLite database files
+data/*.db
+
+# Drizzle migration outputs
+drizzle/*.sqlite
+
+# macOS and Node junk
+.DS_Store
+node_modules/
+
+# local dev database
+dev.db
+local.db
+local.db-shm
+local.db-wal
