@@ -1,6 +1,9 @@
 "use server";
 
 import * as z from "zod";
+import { actionClient } from "@/lib/safe-action";
+
+
 
 const CourseServerSchema = z.object({
   title: z.string().min(3),
@@ -29,20 +32,28 @@ function parseFormDataToObj(formData: FormData) {
   return { title, description, difficulty, published };
 }
 
-export async function createCourse(formData: FormData): Promise<ActionResult> {
-  const parsedInput = parseFormDataToObj(formData);
-  const safe = CourseServerSchema.safeParse(parsedInput);
-  if (!safe.success) {
-    return { success: false, message: "Validation failed", issues: safe.error.format() };
-  }
-  const data = safe.data;
+// export async function createCourse(formData: FormData): Promise<ActionResult> {
+//   const parsedInput = parseFormDataToObj(formData);
+//   const safe = CourseServerSchema.safeParse(parsedInput);
+//   if (!safe.success) {
+//     return { success: false, message: "Validation failed", issues: safe.error.format() };
+//   }
+//   const data = safe.data;
 
-  try {
+//   try {
     
-    console.log("FAKE CREATE COURSE (server):", data);
-    return { success: true, course: data };
-  } catch (err: any) {
-    console.error("DB insert failed:", err);
-    return { success: false, message: "DB insert failed", issues: String(err?.message ?? err) };
+//     console.log("FAKE CREATE COURSE (server):", data);
+//     return { success: true, course: data };
+//   } catch (err: any) {
+//     console.error("DB insert failed:", err);
+//     return { success: false, message: "DB insert failed", issues: String(err?.message ?? err) };
+//   }
+// }
+
+
+export const createCourse = actionClient.schema(CourseServerSchema).action(
+  async ({ parsedInput }) => {
+    return { success: true, course: parsedInput };
   }
-}
+);
+
