@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -11,20 +10,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-type NavigationProps = {
-    isSignedIn: boolean;
-    User?: {
-      name: string;
-      email: string;
-      avatar?: string;
-      profileHref?:string;
-      coursesHref?:string;
-      historyHref?: string;
-    };
+import { authClient } from "@/lib/auth-client";
+const { useSession, signOut } = authClient;
+
+export default function Navigation() {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const isSignedIn = Boolean(user);
+  const avatarSrc = user?.image ?? "/user.png";
+  const displayName = user?.name ?? "User";
+  const email = user?.email ?? "";
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Failed to sign out", error);
+    }
   };
-
-
-export default function Navigation({ isSignedIn, User }: NavigationProps) {
 
   return (
     <div className="p-5" >
@@ -56,16 +59,15 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
               </Link>
             </Button>
           </li>
-          {isSignedIn && User ? (
+          {isSignedIn && user ? (
             <>
             
           <li>
-            <Button className="text-lg px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
-            <Link
-              href="/logout"
+            <Button
+              className="text-lg px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground"
+              onClick={handleSignOut}
             >
               Logout
-            </Link>
             </Button>
           </li>
           {/* Profile Pic Placeholder */}
@@ -73,34 +75,35 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
           <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="w-12 h-12 border-2 border-white rounded-full overflow-hidden transition-all duration-300 hover:border-blue-300 hover:drop-shadow-[1px_1px_40px_rgba(255,215,100,1)] cursor-pointer">
-              <AvatarImage
-                src={`/${User.avatar ?? "user.png"}`}
-                alt={User.name}
+            <AvatarImage
+                src={avatarSrc}
+                alt={displayName}
+              
                 className="object-cover w-full h-full"
               />
-              <AvatarFallback>{User.name?.charAt(0).toUpperCase() ?? "?"}</AvatarFallback>
+              <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
-                <p className="font-semibold">{User.name}</p>
-                <p className="text-sm text-gray-500">{User.email}</p>
+                <p className="font-semibold">{displayName}</p>
+                {email && <p className="text-sm text-gray-500">{email}</p>}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={User.profileHref ?? "/profile"}>Profile</Link>
+                <Link href="/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={User.coursesHref ?? "/courses"}>My Courses</Link>
+                <Link href="/courses">My Courses</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={User.historyHref ?? "/history"}>History</Link>
+                <Link href="/history">History</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/logout" className="text-red-600">
+                <button className="text-red-600" onClick={handleSignOut}>
                   Logout
-                </Link>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -113,7 +116,7 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
             <Link
               href="/sign-in"
             >
-              Login
+              Sign in
             </Link>
             </Button>
 
@@ -135,9 +138,9 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
             <DropdownMenuItem asChild className="">
               <Button className="px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
             <Link
-              href="/login"
+              href="/sign-in"
             >
-              Login
+              Sign in
             </Link>
             </Button>
             </DropdownMenuItem>
