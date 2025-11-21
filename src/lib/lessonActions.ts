@@ -14,28 +14,31 @@ import {
 } from "@/lib/lesson";
 import { actionClient } from "@/lib/safe-action";
 
-// Create lesson
 export const createLessonAction = actionClient
   .schema(lessonFormSchema)
   .action(async ({ parsedInput }) => {
-    const { title, description, unitId, courseId } = parsedInput;
+    const {
+      title,
+      description,
+      unitId,
+      courseId,
+      mediaType,
+      contentUrl,
+    } = parsedInput;
 
-    // Build metadata JSON stored in lessons.metadata
     const metadata = JSON.stringify({
       title,
       description: description ?? "",
     });
 
     await db.insert(lessons).values({
-      unitId,              // integer
-      metadata,            // JSON string
-      contentUrl: "http://placeholder",      // satisfy CHECK (exactly one of contentUrl/contentBlobId)
-      // mediaType & position are using DB defaults:
-      // mediaType: "markdown"
-      // position: 1
+      unitId,
+      mediaType,   // now real value from the form
+      metadata,
+      contentUrl,  // real URL from the form
+      // contentBlobId stays null
     });
 
-    // Revalidate course page or lessons list
     revalidatePath(`/admin/courses/${courseId}`);
 
     return { success: true };

@@ -54,16 +54,18 @@ export function CreateLessonForm({
   const [units, setUnits] = React.useState<UnitOption[]>(initialUnits);
   const [openUnitDialog, setOpenUnitDialog] = React.useState(false);
 
-  // Relax types around useForm to avoid resolver/control generic issues
-  const form = useForm<LessonFormSchema>({
-    resolver: zodResolver(lessonFormSchema) as any,
-    defaultValues: {
-      title: "",
-      description: "",
-      unitId: 0,
-      courseId,
-    },
-  }) as any;
+    const form = useForm<LessonFormSchema>({
+        resolver: zodResolver(lessonFormSchema) as any,
+        defaultValues: {
+            title: "",
+            description: "",
+            unitId: 0,
+            courseId,
+            mediaType: "markdown", // sensible default
+            contentUrl: "",
+        },
+    }) as any;
+
 
   const { execute, status, result } = useAction(createLessonAction, {
     onSuccess: ({ data }) => {
@@ -142,6 +144,55 @@ export function CreateLessonForm({
 
           {/* Hidden courseId so it gets sent along with the form */}
           <input type="hidden" {...form.register("courseId")} value={courseId} />
+
+          {/* Media type */}
+            <FormField
+            control={form.control}
+            name="mediaType"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Content type</FormLabel>
+                <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                >
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a content type" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                    <SelectItem value="youtube">YouTube video</SelectItem>
+                    <SelectItem value="markdown">Markdown page</SelectItem>
+                    <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectItem value="image">Image</SelectItem>
+                    <SelectItem value="audio">Audio</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+
+            {/* Main content URL */}
+            <FormField
+            control={form.control}
+            name="contentUrl"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Content URL</FormLabel>
+                <FormControl>
+                    <Input
+                    placeholder="https://..."
+                    {...field}
+                    />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+
 
           <FormField
             control={form.control}
