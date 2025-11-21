@@ -111,7 +111,7 @@ export default function Navigation({ isSignedIn, User }: NavigationProps) {
             <li>
             <Button className="px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground">
             <Link
-              href="/login"
+              href="/sign-in"
             >
               Login
             </Link>
