@@ -1,4 +1,4 @@
-"use client";
+import Link from "next/link";
 
 import {
   Table,
@@ -8,9 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Button } from "@/components/ui/button";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,32 +21,21 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { deleteCourseAction } from "@/actions/delete-course";
-import { useTransition } from "react";
-
-// Temporary placeholder data until backend fetch is added
-const dummyCourses = [
-  { id: 1, title: "Intro to Python", description: "Learn Python", status: "published" },
-  { id: 2, title: "Web Development Basics", description: "Web dev fundamentals", status: "published" },
-  { id: 3, title: "Data Structures", description: "Core data structures", status: "unpublished" },
-  { id: 4, title: "Advanced JavaScript", description: "Advanced JS topics", status: "published" },
-  { id: 5, title: "React Fundamentals", description: "React basics", status: "unpublished" },
-];
-
-export default function AdminCoursesPage() {
-  const [isPending, startTransition] = useTransition();
-
-  // Calls the Safe Action to delete a course by ID
-  function handleDelete(id: number) {
-    startTransition(() => {
-      deleteCourseAction({ id });
-    });
-  }
+export default function AdminCoursePage() {
+  const dummyCourses = [
+    { id: 1, title: "Intro to Python", description: "Learn Python", status: "published" },
+    { id: 2, title: "Web Development Basics", description: "Web dev fundamentals", status: "published" },
+    { id: 3, title: "Data Structures", description: "Core data structures", status: "unpublished" },
+    { id: 4, title: "Advanced JavaScript", description: "Advanced JS topics", status: "published" },
+    { id: 5, title: "React Fundamentals", description: "React basics", status: "unpublished" },
+  ];
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">Admin Courses</h1>
-
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold mb-8">Admin Courses</h1>
+        <Link href={"/admin/courses/create"}><Button variant={"outline"} className="cursor-pointer">Create Admin Page</Button></Link>
+      </div>
       {/* Table of course data rendered from placeholder array */}
       <div className="rounded-md border">
         <Table>
@@ -94,12 +81,12 @@ export default function AdminCoursesPage() {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
 
                         {/* Executes the delete action when confirmed */}
-                        <AlertDialogAction
+                        {/* <AlertDialogAction
                           disabled={isPending}
                           onClick={() => handleDelete(course.id)}
                         >
                           {isPending ? "Deleting..." : "Delete"}
-                        </AlertDialogAction>
+                        </AlertDialogAction> */}
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -113,3 +100,43 @@ export default function AdminCoursesPage() {
     </div>
   );
 }
+
+
+// "use client";
+
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
+
+// import { Button } from "@/components/ui/button";
+
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+//   AlertDialogTrigger,
+// } from "@/components/ui/alert-dialog";
+
+// import { deleteCourseAction } from "@/actions/delete-course";
+// import { useTransition } from "react";
+
+// export default function AdminCoursesPage() {
+//   const [isPending, startTransition] = useTransition();
+
+//   // Calls the Safe Action to delete a course by ID
+//   function handleDelete(id: number) {
+//     startTransition(() => {
+//       deleteCourseAction({ id });
+//     });
+//   }
+// }

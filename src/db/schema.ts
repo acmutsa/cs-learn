@@ -40,6 +40,9 @@ export const tags = sqliteTable(
   {
     id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
     tagName: text("tag_name").notNull().unique(),
+    createdBy: text("created_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(now()),
@@ -225,8 +228,12 @@ export const attachments = sqliteTable(
   ]
 );
 
-export const tagsRelations = relations(tags, ({ many }) => ({
+export const tagsRelations = relations(tags, ({ many, one }) => ({
   coursesTags: many(coursesTags),
+  creator: one(users, {
+    fields: [tags.createdBy],
+    references: [users.id],
+  }),
 }));
 
 export const coursesRelations = relations(courses, ({ many, one }) => ({
