@@ -2,7 +2,7 @@ import CourseForm from "@/components/admin/CourseForm"
 
 export default function CourseCreatePage() {
   return (
-    <div className="">
+    <div className="flex justify-center">
       <CourseForm/>
     </div>
   )

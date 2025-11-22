@@ -1,1 +1,0 @@
-ALTER TABLE `tags` ADD `createdBy` integer REFERENCES users(id);

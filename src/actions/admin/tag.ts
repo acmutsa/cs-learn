@@ -5,11 +5,9 @@ import { db } from "@/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { eq, sql } from "drizzle-orm";
-import { CreateTagResponse } from "@/lib/types";
+import { AllTags, CreateResponse, TagWithStats } from "@/lib/types";
 
-import { TagWithStats } from "@/lib/types";
-
-export async function createTag(data: TagFormValues): Promise<CreateTagResponse> {
+export async function createTag(data: TagFormValues): Promise<CreateResponse> {
     const user = await auth.api.getSession({
         headers: await headers()
     });
@@ -17,7 +15,7 @@ export async function createTag(data: TagFormValues): Promise<CreateTagResponse>
     try {
         const existingTag = await db.select().from(tags).where(eq(tags.tagName, data.tagName));
         if (existingTag.length > 0){
-            return { success: false, message: "Tag already made"};
+            return { success: false, message: "Tag already made."};
         }
         await db.insert(tags).values({
             tagName: data.tagName,
@@ -25,11 +23,11 @@ export async function createTag(data: TagFormValues): Promise<CreateTagResponse>
         });
         return { success: true, message: "Tag created successfully!" };
     } catch (error) {
-        return { success: false, message: "Failed to create tag"}
+        return { success: false, message: "Failed to create tag."}
     }
 }
 
-export async function getAllTags(): Promise<TagWithStats[]> {
+export async function getAllTagsData(): Promise<TagWithStats[]> {
     const result = await db
         .select({
             id: tags.id,
@@ -42,5 +40,10 @@ export async function getAllTags(): Promise<TagWithStats[]> {
         .leftJoin(coursesTags, eq(coursesTags.tagId, tags.id))
         .groupBy(tags.id);
 
+    return result;
+}
+
+export async function getAllTags(): Promise<AllTags[]> {
+    const result = await db.select({tagName: tags.tagName}).from(tags);
     return result;
 }
