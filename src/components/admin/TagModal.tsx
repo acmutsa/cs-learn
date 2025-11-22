@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { tagSchema, type TagFormValues } from "@/lib/validations/course";
+import { tagSchema, type TagFormValues } from "@/lib/validations/tag";
 import { toast } from "sonner";
 import { createTag } from "@/actions/admin/tag";
 import { TagModalProps } from "@/lib/types";

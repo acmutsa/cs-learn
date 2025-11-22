@@ -38,6 +38,7 @@ import {
 import { getAllCourses } from "@/actions/admin/course";
 import { CourseWithData } from "@/lib/types";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const columns: ColumnDef<CourseWithData>[] = [
   {
@@ -80,7 +81,14 @@ const columns: ColumnDef<CourseWithData>[] = [
         </div>
       )
     },
-    cell: ({ row }) => <div className="text-left pl-3">{row.getValue("title")}</div>,
+    cell: ({ row }) => {
+      const course = row.original;
+      return (
+        <div className="text-left pl-3">
+          <Link className="hover:underline" href={`/admin/courses/${course.id}`}>{row.getValue("title")}</Link>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "description",

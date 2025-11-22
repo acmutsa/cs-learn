@@ -1,5 +1,7 @@
 import React from "react";
-import AdminNavbar from "@/components/AdminNavbar";
+import AdminNavbar from "@/components/admin/AdminNavbar";
+import { Toaster } from "sonner"
+
 
 export default function AdminLayout({
   children,
@@ -14,6 +16,7 @@ export default function AdminLayout({
       {/* Page content */}
       <main className="flex-1 p-6">
         {children}
+        <Toaster richColors position="top-right" />
       </main>
 
       {/* Footer */}
