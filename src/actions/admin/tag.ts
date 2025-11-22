@@ -1,6 +1,6 @@
 'use server';
 import { tags, users, coursesTags } from "@/db/schema";
-import { type TagFormValues } from "@/lib/validations/course";
+import { type TagFormValues } from "@/lib/validations/tag";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

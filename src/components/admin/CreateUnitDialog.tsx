@@ -7,11 +7,11 @@ import { useAction } from "next-safe-action/hooks";
 
 import {
   createUnitAction,
-} from "@/lib/lessonActions";
+} from "@/actions/admin/units";
 import {
   createUnitSchema,
-  type CreateUnitSchema,
-} from "@/lib/lesson";
+  type CreateUnitValues,
+} from "@/lib/validations/unit";
 
 import {
   Dialog,
@@ -44,7 +44,7 @@ export function CreateUnitDialog({
   courseId,
   onCreated,
 }: CreateUnitDialogProps) {
-  const form = useForm<CreateUnitSchema>({
+  const form = useForm<CreateUnitValues>({
     resolver: zodResolver(createUnitSchema),
     defaultValues: {
       title: "",
@@ -67,7 +67,7 @@ export function CreateUnitDialog({
 
   const isSubmitting = status === "executing";
 
-  const onSubmit = (values: CreateUnitSchema) => {
+  const onSubmit = (values: CreateUnitValues) => {
     execute(values);
   };
 

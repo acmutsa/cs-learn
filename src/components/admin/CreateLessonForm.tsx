@@ -8,9 +8,9 @@ import { useAction } from "next-safe-action/hooks";
 
 import {
   lessonFormSchema,
-  type LessonFormSchema,
-} from "@/lib/lesson";
-import { createLessonAction } from "@/lib/lessonActions";
+  type LessonFormValues,
+} from "@/lib/validations/lesson";
+import { createLessonAction } from "@/actions/admin/lesson";
 
 import {
   Form,
@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { CreateUnitDialog } from "@/components/CreateUnitDialog";
+import { CreateUnitDialog } from "./CreateUnitDialog";
 
 type UnitOption = {
   id: number;
@@ -56,7 +56,7 @@ export function CreateLessonForm({
 
   // Relaxed typing around resolver to avoid RHF + zod generic noise,
   // while still keeping LessonFormSchema as the form's value type.
-  const form = useForm<LessonFormSchema>({
+  const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema) as any,
     defaultValues: {
       title: "",
@@ -78,7 +78,7 @@ export function CreateLessonForm({
 
   const isSubmitting = status === "executing";
 
-  const onSubmit = (values: LessonFormSchema) => {
+  const onSubmit = (values: LessonFormValues) => {
     execute(values);
   };
 

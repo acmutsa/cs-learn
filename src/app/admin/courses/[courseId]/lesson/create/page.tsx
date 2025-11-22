@@ -1,7 +1,7 @@
 import { db } from "@/db/index";
 import { units } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { CreateLessonForm } from "./CreateLessonForm";
+import { CreateLessonForm } from "@/components/admin/CreateLessonForm";
 import {
   Card,
   CardHeader,
