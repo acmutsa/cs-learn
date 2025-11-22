@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d903e08a-fac6-4a87-aa61-919510eadf44",
-  "prevId": "0edc942a-600d-499f-8e5f-a8700a036ae4",
+  "id": "2750c3c1-e1d9-4edb-af49-33c04fda95ef",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attachments": {
       "name": "attachments",
@@ -284,9 +284,9 @@
           "autoincrement": false,
           "default": "'beginner'"
         },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "integer",
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -310,12 +310,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "courses_createdBy_users_id_fk": {
-          "name": "courses_createdBy_users_id_fk",
+        "courses_created_by_users_id_fk": {
+          "name": "courses_created_by_users_id_fk",
           "tableFrom": "courses",
           "tableTo": "users",
           "columnsFrom": [
-            "createdBy"
+            "created_by"
           ],
           "columnsTo": [
             "id"
@@ -530,6 +530,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -556,7 +563,21 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tags_created_by_users_id_fk": {
+          "name": "tags_created_by_users_id_fk",
+          "tableFrom": "tags",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {
@@ -876,6 +897,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'user'"
         },
         "email_verified": {
           "name": "email_verified",

@@ -1,3 +1,14 @@
-export default function Page() {
-  return (<div>This is the admin course page!</div>);
+import CourseTable from "@/components/admin/CourseTable";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+export default function AdminCoursePage() {
+  return (
+    <div>
+      <Link href={"/admin/courses/create"}>
+        <Button className="cursor-pointer" variant={"outline"}>Create a New Course</Button>
+      </Link>
+      <CourseTable />
+    </div>
+  );
 }

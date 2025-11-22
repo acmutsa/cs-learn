@@ -45,8 +45,13 @@ data/*.db
 
 # Drizzle migration outputs
 drizzle/*.sqlite
-drizzle/*.sql
 
 # macOS and Node junk
 .DS_Store
 node_modules/
+
+# local dev database
+dev.db
+local.db
+local.db-shm
+local.db-wal
