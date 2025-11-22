@@ -1,7 +1,7 @@
 export const roles = ["user", "admin"] as const;
 export type Role = (typeof roles)[number];
 
-export type CreateTagResponse =
+export type CreateResponse =
   | { success: true; message: string }
   | { success: false; message: string };
 
@@ -15,3 +15,16 @@ export type TagWithStats = {
 export type TagModalProps = {
   onTagCreated?: () => void;
 };
+
+export type AllTags = {
+  tagName: string;
+}
+
+export type CourseWithData = {
+  id: number;
+  title: string;
+  description: string | null;
+  difficulty: string;
+  createdBy: string | null;
+  tags: string[];
+}

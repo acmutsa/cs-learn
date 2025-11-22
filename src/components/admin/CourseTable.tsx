@@ -35,12 +35,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { getAllTagsData } from "@/actions/admin/tag";
-import { TagWithStats } from "@/lib/types";
+import { getAllCourses } from "@/actions/admin/course";
+import { CourseWithData } from "@/lib/types";
 import { useEffect, useState } from "react";
-import TagModal from "./TagModal";
 
-const columns: ColumnDef<TagWithStats>[] = [
+const columns: ColumnDef<CourseWithData>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,7 +65,7 @@ const columns: ColumnDef<TagWithStats>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "tagName",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <div className="text-left">
@@ -75,13 +74,42 @@ const columns: ColumnDef<TagWithStats>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="cursor-pointer text-center"
           >
-            Tag Name
+            Title
             <ArrowUpDown />
           </Button>
         </div>
       )
     },
-    cell: ({ row }) => <div className="text-left pl-3">{row.getValue("tagName")}</div>,
+    cell: ({ row }) => <div className="text-left pl-3">{row.getValue("title")}</div>,
+  },
+  {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <div className="text-left">
+            Description
+        </div>
+      )
+    },
+    cell: ({ row }) => <div className="text-left">{row.getValue("description")}</div>,
+  },
+  {
+    accessorKey: "difficulty",
+    header: ({ column }) => {
+      return (
+        <div className="text-left">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="cursor-pointer"
+          >
+            Difficulty
+            <ArrowUpDown />
+          </Button>
+        </div>
+      )
+    },
+    cell: ({ row }) => <div className="text-left pl-3">{row.getValue("difficulty")}</div>,
   },
   {
     accessorKey: "createdBy",
@@ -100,24 +128,6 @@ const columns: ColumnDef<TagWithStats>[] = [
       )
     },
     cell: ({ row }) => <div className="text-left pl-3">{row.getValue("createdBy")}</div>,
-  },
-  {
-    accessorKey: "courseCount",
-    header: ({ column }) => {
-      return (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="cursor-pointer"
-          >
-            # of Courses
-            <ArrowUpDown />
-          </Button>
-        </div>
-      )
-    },
-    cell: ({ row }) => <div className="text-right pr-3">{row.getValue("courseCount")}</div>,
   },
   {
     id: "actions",
@@ -158,19 +168,16 @@ const columns: ColumnDef<TagWithStats>[] = [
   },
 ]
 
-export default function TagTable() {
-  const [tags, setTags] = useState<TagWithStats[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function CourseTable() {
+  const [courses, setCourses] = useState<CourseWithData[]>([]);
 
-  const fetchTags = async () => {
-    setLoading(true);
-    const result = await getAllTagsData();
-    setTags(result);
-    setLoading(false);
+  const fetchCourses = async () => {
+    const result = await getAllCourses();
+    setCourses(result);
   };
 
   useEffect(() => {
-    fetchTags();
+    fetchCourses();
   }, []);
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -182,7 +189,7 @@ export default function TagTable() {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data: tags,
+    data: courses,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -202,15 +209,12 @@ export default function TagTable() {
 
   return (
     <div className="w-full">
-      <div>
-          <TagModal onTagCreated={fetchTags}/>
-      </div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter tags..."
-          value={(table.getColumn("tagName")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter title..."
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("tagName")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

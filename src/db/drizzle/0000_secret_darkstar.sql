@@ -39,10 +39,10 @@ CREATE TABLE `courses` (
 	`title` text NOT NULL,
 	`description` text,
 	`difficulty` text DEFAULT 'beginner' NOT NULL,
-	`createdBy` integer,
+	`created_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`createdBy`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE TABLE `courses_tags` (
@@ -74,8 +74,10 @@ CREATE TABLE `lessons` (
 CREATE TABLE `tags` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`tag_name` text NOT NULL,
+	`created_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null,
 	CONSTRAINT "tags_tag_name_check" CHECK("tags"."tag_name" IS NOT NULL)
 );
 --> statement-breakpoint

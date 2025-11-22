@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ad01f5a3-d958-42ac-8041-0c4114ff9bb2",
-  "prevId": "49ca2593-f0bd-46e3-a921-978f05aad417",
+  "id": "2750c3c1-e1d9-4edb-af49-33c04fda95ef",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attachments": {
       "name": "attachments",
@@ -284,9 +284,9 @@
           "autoincrement": false,
           "default": "'beginner'"
         },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "integer",
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -310,12 +310,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "courses_createdBy_users_id_fk": {
-          "name": "courses_createdBy_users_id_fk",
+        "courses_created_by_users_id_fk": {
+          "name": "courses_created_by_users_id_fk",
           "tableFrom": "courses",
           "tableTo": "users",
           "columnsFrom": [
-            "createdBy"
+            "created_by"
           ],
           "columnsTo": [
             "id"

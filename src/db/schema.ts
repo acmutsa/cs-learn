@@ -61,7 +61,7 @@ export const courses = sqliteTable("courses", {
   difficulty: text("difficulty", { enum: difficultyValues })
     .notNull()
     .default("beginner"),
-  createdBy: integer({ mode: "number" }).references(() => users.id, {
+  createdBy: text("created_by").references(() => users.id, {
     onDelete: "set null",
   }),
 
