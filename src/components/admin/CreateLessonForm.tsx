@@ -39,16 +39,17 @@ type UnitOption = {
 };
 
 type CreateLessonFormProps = {
-  courseId: string;
+  courseId: number;
   initialUnits: UnitOption[];
 };
 
 const NEW_UNIT_VALUE = "__new_unit__";
 
-export function CreateLessonForm({
+export default function CreateLessonForm({
   courseId,
   initialUnits,
 }: CreateLessonFormProps) {
+  const id = Number(courseId);
   const router = useRouter();
 
   const [units, setUnits] = React.useState<UnitOption[]>(initialUnits);
@@ -62,7 +63,7 @@ export function CreateLessonForm({
       title: "",
       description: "",
       unitId: 0,
-      courseId,
+      courseId: id,
       mediaType: "markdown",
       contentUrl: "",
     },
@@ -71,7 +72,7 @@ export function CreateLessonForm({
   const { execute, status, result } = useAction(createLessonAction, {
     onSuccess: ({ data }) => {
       if (data?.success) {
-        router.push(`/admin/courses/${courseId}`);
+        router.push(`/admin/courses/${id}`);
       }
     },
   });
@@ -103,10 +104,9 @@ export function CreateLessonForm({
       <CreateUnitDialog
         open={openUnitDialog}
         onOpenChange={setOpenUnitDialog}
-        courseId={courseId}
+        courseId={id}
         onCreated={handleUnitCreated}
       />
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -140,7 +140,7 @@ export function CreateLessonForm({
                   <FormControl>
                     <Textarea
                       placeholder="Short summary of what this lesson covers..."
-                      className="min-h-[96px]"
+                      className="min-h-[96]"
                       {...field}
                     />
                   </FormControl>
@@ -200,7 +200,7 @@ export function CreateLessonForm({
           </div>
 
           {/* Hidden courseId so it gets sent along with the form */}
-          <input type="hidden" {...form.register("courseId")} value={courseId} />
+          <input type="hidden" {...form.register("courseId")} value={id} />
 
           {/* Unit selection */}
           <FormField
@@ -214,17 +214,17 @@ export function CreateLessonForm({
                   onValueChange={(val) => handleUnitChange(val, field.onChange)}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="cursor-pointer">
                       <SelectValue placeholder="Select a unit" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {units.map((unit) => (
-                      <SelectItem key={unit.id} value={String(unit.id)}>
+                      <SelectItem className="cursor-pointer" key={unit.id} value={String(unit.id)}>
                         {unit.title ?? `Unit ${unit.id}`}
                       </SelectItem>
                     ))}
-                    <SelectItem value={NEW_UNIT_VALUE}>
+                    <SelectItem className="cursor-pointer" value={NEW_UNIT_VALUE}>
                       + Create new unit
                     </SelectItem>
                   </SelectContent>

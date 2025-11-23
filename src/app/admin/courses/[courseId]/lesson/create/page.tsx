@@ -1,7 +1,7 @@
 import { db } from "@/db/index";
 import { units } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { CreateLessonForm } from "@/components/admin/CreateLessonForm";
+import CreateLessonForm from "@/components/admin/CreateLessonForm";
 import {
   Card,
   CardHeader,
@@ -16,11 +16,12 @@ type PageProps = {
 
 export default async function CreateLessonPage({ params }: PageProps) {
   const { courseId } = await params;
+  const id = Number(courseId);
 
   const courseUnits = await db
     .select()
     .from(units)
-    .where(eq(units.courseId, courseId));
+    .where(eq(units.courseId, id));
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -44,7 +45,7 @@ export default async function CreateLessonPage({ params }: PageProps) {
         </CardHeader>
         <CardContent className="pt-2">
           <CreateLessonForm
-            courseId={courseId}
+            courseId={id}
             initialUnits={courseUnits.map((u) => ({
               id: u.id,
               title: u.title ?? `Unit ${u.id}`,

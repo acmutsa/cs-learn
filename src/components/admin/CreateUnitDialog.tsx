@@ -1,17 +1,9 @@
 "use client";
-
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
-
-import {
-  createUnitAction,
-} from "@/actions/admin/units";
-import {
-  createUnitSchema,
-  type CreateUnitValues,
-} from "@/lib/validations/unit";
+import { toast } from "sonner";
+import { createUnitAction } from "@/actions/admin/units";
+import { unitFormSchema, type UnitFormValues } from "@/lib/validations/unit";
 
 import {
   Dialog,
@@ -34,7 +26,7 @@ import { Input } from "@/components/ui/input";
 type CreateUnitDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  courseId: string;
+  courseId: number;
   onCreated?: (unit: { id: number; title: string | null }) => void;
 };
 
@@ -44,31 +36,31 @@ export function CreateUnitDialog({
   courseId,
   onCreated,
 }: CreateUnitDialogProps) {
-  const form = useForm<CreateUnitValues>({
-    resolver: zodResolver(createUnitSchema),
+
+  const form = useForm<UnitFormValues>({
+    resolver: zodResolver(unitFormSchema),
     defaultValues: {
       title: "",
       courseId,
     },
   });
 
-  const { execute, status, result } = useAction(createUnitAction, {
-    onSuccess: ({ data }) => {
-      if (data?.success) {
-        onCreated?.({
-          id: data.unitId,
-          title: data.unitTitle,
-        });
-        form.reset({ title: "", courseId });
-        onOpenChange(false);
+  const onSubmit = async (values: UnitFormValues) => {
+    try {
+      const result = await createUnitAction({ ...values, courseId });
+      if (!result.data?.success) {
+        toast.error(result.data?.message);
+        form.setError("title", { type: "manual", message: result.data?.message });
+      } else {
+        if (onCreated && result.data.unitId) {
+          onCreated({ id: result.data.unitId, title: result.data.unitTitle });
+        }
+        toast.success(result.data?.message);
+        form.reset();
       }
-    },
-  });
-
-  const isSubmitting = status === "executing";
-
-  const onSubmit = (values: CreateUnitValues) => {
-    execute(values);
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -79,7 +71,6 @@ export function CreateUnitDialog({
             Create new unit
           </DialogTitle>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -98,23 +89,17 @@ export function CreateUnitDialog({
                 </FormItem>
               )}
             />
-
-            {result.serverError && (
-              <p className="text-sm text-destructive">
-                {String(result.serverError)}
-              </p>
-            )}
-
             <DialogFooter className="pt-2">
               <Button
+                className="cursor-pointer"
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create unit"}
+              <Button type="submit" className="cursor-pointer">
+                Create unit
               </Button>
             </DialogFooter>
           </form>

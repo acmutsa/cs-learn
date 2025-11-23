@@ -1,8 +1,7 @@
 import { z } from "zod";
-// For the “create unit” modal
-export const createUnitSchema = z.object({
+export const unitFormSchema = z.object({
   title: z.string().min(1, "Unit title is required"),
-  courseId: z.string().min(1),
+  courseId: z.number().min(1, "Course ID is required"),
 });
 
-export type CreateUnitValues = z.infer<typeof createUnitSchema>;
+export type UnitFormValues = z.infer<typeof unitFormSchema>;

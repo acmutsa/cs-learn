@@ -97,7 +97,7 @@ export const units = sqliteTable(
   "units",
   {
     id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-    courseId: text("course_id")
+    courseId: integer("course_id")
       .notNull()
       .references(() => courses.id, { onDelete: "cascade" }),
     title: text("title"),

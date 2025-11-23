@@ -1,46 +1,48 @@
 'use server';
+import { adminClient } from "@/lib/safe-action";
 import { coursesTags, courses, users, tags } from "@/db/schema";
-import { type CourseFormValues } from "@/lib/validations/course";
+import { courseSchema, type CourseFormValues } from "@/lib/validations/course";
 import { db } from "@/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
-import { CreateResponse, CourseWithData } from "@/lib/types";
+import { CourseWithData } from "@/lib/types";
 
-export async function createCourse(data: CourseFormValues): Promise<CreateResponse> {
-    const user = await auth.api.getSession({
-        headers: await headers()
-    });
-    if (!user) throw new Error("Unauthorized");
-    try {
-        const existingCourse = await db.select().from(courses).where(eq(courses.title, data.title));
-        if (existingCourse.length > 0) {
-            return { success: false, message: "Course with title already made."}
-        }
-        const [newCourse] = await db.insert(courses).values({
-            title: data.title,
-            description: data.description,
-            difficulty: data.difficulty,
-            createdBy: user.user.id,
-        }).returning({ id: courses.id});
-        const courseId = newCourse.id;
-        if (data.tags && data.tags.length > 0) {
-            for (const tagName of data.tags) {
-                const tag = await db.select({ id: tags.id }).from(tags).where(eq(tags.tagName, tagName)).limit(1);
-                if (tag.length > 0) {
-                    await db.insert(coursesTags).values({
-                        courseId: courseId,
-                        tagId: tag[0].id,
-                    });
-                }
-            }
-        }
-        return { success: true, message: "Course created successfully!" };
-    } catch (error) {
-        console.error(error);
-        return { success: false, message: "Failed to create course." };
+export const createCourseAction = adminClient
+  .schema(courseSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { title, description, difficulty, tags: tagNames } = parsedInput;
+    const existing = await db
+      .select()
+      .from(courses)
+      .where(eq(courses.title, title));
+    if (existing.length > 0) {
+      return { success: false, message: "Course with this title already exists.",}
     }
-}
+    const [created] = await db
+      .insert(courses)
+      .values({
+        title,
+        description,
+        difficulty,
+        createdBy: ctx.userId,
+      })
+      .returning();
+    if (tagNames?.length) {
+      for (const tagName of tagNames) {
+        const [tag] = await db
+          .select()
+          .from(tags)
+          .where(eq(tags.tagName, tagName));
+
+        if (tag) {
+          await db.insert(coursesTags).values({
+            courseId: created.id,
+            tagId: tag.id,
+          });
+        }
+      }
+    }
+    return { success: true, message: "Course created!",};
+  });
 
 export async function getAllCourses(): Promise<CourseWithData[]> {
   const rows = await db
@@ -77,4 +79,34 @@ export async function getAllCourses(): Promise<CourseWithData[]> {
   }
 
   return Object.values(coursesMap);
+}
+
+export async function getCourseById(id: number) {
+  const rows = await db
+    .select({
+      id: courses.id,
+      title: courses.title,
+      description: courses.description,
+      difficulty: courses.difficulty,
+      createdBy: users.name,
+      tagName: tags.tagName,
+    })
+    .from(courses)
+    .leftJoin(users, eq(users.id, courses.createdBy))
+    .leftJoin(coursesTags, eq(coursesTags.courseId, courses.id))
+    .leftJoin(tags, eq(tags.id, coursesTags.tagId))
+    .where(eq(courses.id, id));
+
+  if (rows.length === 0) return null;
+
+  const course = {
+    id: rows[0].id,
+    title: rows[0].title,
+    description: rows[0].description,
+    difficulty: rows[0].difficulty,
+    createdBy: rows[0].createdBy,
+    tags: rows.map((r) => r.tagName).filter(Boolean),
+  };
+
+  return course;
 }

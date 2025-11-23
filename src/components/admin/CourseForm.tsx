@@ -28,7 +28,7 @@ import { useState, useEffect } from "react";
 import { getAllTags } from "@/actions/admin/tag";
 import { X } from 'lucide-react';
 import { toast } from "sonner";
-import { createCourse } from "@/actions/admin/course";
+import { createCourseAction } from "@/actions/admin/course";
 import { useRouter } from "next/navigation";
 
 export default function CourseForm() {
@@ -57,24 +57,17 @@ export default function CourseForm() {
     }, []);
 
     const onSubmit = async (values: CourseFormValues) => {
-        const result = courseSchema.safeParse(values);
-        if (!result.success) {
-            toast.error(result.error.issues[0].message);
-            result.error.issues.forEach(issue => {
-                form.setError(issue.path[0] as keyof CourseFormValues, {
-                    type: "manual",
-                    message: issue.message,
-                })
-            })
-        } else {
-            const response = await createCourse(result.data);
-            if (!response.success) {
-                toast.error(response.message);
-                form.setError("title", { type: "manual", message: response.message });
+        try {
+            const response = await createCourseAction(values);
+            if (!response.data?.success) {
+                toast.error(response.data?.message);
+                form.setError("title", { type: "manual", message: response.data?.message });
             } else {
-                toast.success(response.message);
+                toast.success(response.data?.message);
                 router.push("/admin/courses");
             }
+        } catch (error) {
+            toast.error("Something went wrong");
         }
     }
 
