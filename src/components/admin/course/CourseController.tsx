@@ -53,10 +53,10 @@ export default function CourseController({ units, lessons }: CourseControllerPro
   );
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/4 order-2 md:order-1">
+    <div className="flex flex-col md:flex-row gap-6 h-full">
+      <div className="md:w-1/4 order-2 md:order-1 h-[60vh] overflow-y-auto">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Accordion type="single" collapsible>
+          <Accordion type="multiple">
             <Droppable droppableId="units" type="UNIT">
               {(provided) => (
                 <div
@@ -76,7 +76,7 @@ export default function CourseController({ units, lessons }: CourseControllerPro
                             {...unitProvided.draggableProps}
                             className="border p-4 rounded bg-white shadow space-y-2"
                           >
-                            <AccordionItem value="index">
+                            <AccordionItem value={`unit-${unit.id}`}>
                             {/* UNIT HEADER – drag handle ONLY */}
                             <div
                               {...unitProvided.dragHandleProps}

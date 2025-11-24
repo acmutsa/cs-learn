@@ -37,7 +37,7 @@ export default async function CourseIdPage({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 min-h-[500px] h-[85vh]">
       <div className="flex justify-end gap-4">
         <Link href={`/admin/courses/${id}/lesson/create`}>
           <Button variant={"outline"} className="cursor-pointer">Create Lesson</Button>
@@ -46,13 +46,13 @@ export default async function CourseIdPage({
           <Button variant={"outline"} className="cursor-pointer">Create Unit</Button>
         </Link>
       </div>
-      <Card>
+      <Card className="h-full">
         <CardTitle className="px-6 text-3xl">
           <span className="font-semibold">Course: </span>
           <span className="font-light">{course.title}</span>
         </CardTitle>
         <CardDescription className="px-6 text-md">{course.description}</CardDescription>
-        <CardContent>
+        <CardContent className="h-full">
           <CourseController units={units} lessons={lessons} />
         </CardContent>
       </Card>

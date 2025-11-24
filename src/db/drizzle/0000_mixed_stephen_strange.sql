@@ -57,6 +57,8 @@ CREATE TABLE `courses_tags` (
 CREATE TABLE `lessons` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`unitId` integer NOT NULL,
+	`title` text NOT NULL,
+	`description` text,
 	`media_type` text DEFAULT 'markdown' NOT NULL,
 	`content_url` text,
 	`contentBlobId` integer,
@@ -84,7 +86,7 @@ CREATE TABLE `tags` (
 CREATE UNIQUE INDEX `tags_tag_name_unique` ON `tags` (`tag_name`);--> statement-breakpoint
 CREATE TABLE `units` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`course_id` text NOT NULL,
+	`course_id` integer NOT NULL,
 	`title` text,
 	`position` integer DEFAULT 1 NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,

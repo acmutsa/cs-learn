@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1763810490866,
-      "tag": "0000_secret_darkstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1763952304214,
-      "tag": "0001_huge_gideon",
+      "when": 1764021220798,
+      "tag": "0000_mixed_stephen_strange",
       "breakpoints": true
     }
   ]
