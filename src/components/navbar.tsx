@@ -1,5 +1,7 @@
-"use client";
+
 import Link from "next/link";
+import LogoutButton from "./SignOut";
+import { headers } from "next/headers"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,24 +12,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client";
-const { useSession, signOut } = authClient;
+import { auth } from "@/lib/auth";
 
-export default function Navigation() {
-  const { data: session } = useSession();
+
+export default async function Navigation() {
+  const h = await headers();
+  const session = await auth.api.getSession({
+    headers: h,
+  });
   const user = session?.user;
   const isSignedIn = Boolean(user);
   const avatarSrc = user?.image ?? "/user.png";
   const displayName = user?.name ?? "User";
   const email = user?.email ?? "";
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Failed to sign out", error);
-    }
-  };
 
   return (
     <div className="p-5" >
@@ -63,12 +60,10 @@ export default function Navigation() {
             <>
             
           <li>
-            <Button
-              className="text-lg px-4 py-2 border border-border rounded-md transition-all duration-300 hover:bg-muted hover:text-foreground"
-              onClick={handleSignOut}
-            >
-              Logout
-            </Button>
+            <>
+              <LogoutButton />   {/* CLIENT BUTTON */}
+            </>
+      
           </li>
           {/* Profile Pic Placeholder */}
           <li>
@@ -101,9 +96,9 @@ export default function Navigation() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <button className="text-red-600" onClick={handleSignOut}>
-                  Logout
-                </button>
+                <>
+              <LogoutButton />   {/* CLIENT BUTTON */}
+            </>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
