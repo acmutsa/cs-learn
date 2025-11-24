@@ -18,6 +18,7 @@
     "esbuild"
   ],
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.15.15",
     "@radix-ui/react-accordion": "^1.2.12",

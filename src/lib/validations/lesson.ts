@@ -6,7 +6,6 @@ export const lessonFormSchema = z.object({
   description: z.string().optional(),
   unitId: z.coerce.number().int().positive("Unit is required"),
   courseId: z.number().min(1),
-
   mediaType: z.enum(mediaTypeValues),
   contentUrl: z
     .string()

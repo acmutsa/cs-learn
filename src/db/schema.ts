@@ -156,18 +156,17 @@ export const lessons = sqliteTable(
     unitId: integer({ mode: "number" })
       .notNull()
       .references(() => units.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description"),
     mediaType: text("media_type", { enum: mediaTypeValues })
       .notNull()
       .default("markdown"),
-
     contentUrl: text("content_url"), // e.g., https://youtube.com/...
     contentBlobId: integer({ mode: "number" }).references(() => blobs.id, {
       onDelete: "set null",
     }),
-
     metadata: text("metadata").notNull().default("{}"), // store JSON string; parse in app
     position: integer("position").notNull().default(1),
-
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(now()),

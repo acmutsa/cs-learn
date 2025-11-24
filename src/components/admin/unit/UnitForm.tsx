@@ -16,12 +16,15 @@ import { useForm } from "react-hook-form";
 import { unitFormSchema, type UnitFormValues } from "@/lib/validations/unit";
 import { toast } from "sonner";
 import { createUnitAction } from "@/actions/admin/units";
+import { useRouter } from "next/navigation";
 
 interface UnitFormProps {
   courseId: number;
 }
 
 export default function UnitForm({courseId}: UnitFormProps) {
+  const router = useRouter();
+
   const form = useForm<UnitFormValues>({
     resolver: zodResolver(unitFormSchema),
     defaultValues: {
@@ -37,6 +40,7 @@ export default function UnitForm({courseId}: UnitFormProps) {
         form.setError("title", { type: "manual", message: result.data?.message });
       } else {
         toast.success(result.data?.message);
+        router.push(`/admin/courses/${courseId}`);
         form.reset();
       }
     } catch (error) {
@@ -64,7 +68,10 @@ export default function UnitForm({courseId}: UnitFormProps) {
                       </FormItem>
                   )}
               />
-              <Button className="cursor-pointer" type="submit">Submit</Button>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <Button className="cursor-pointer" type="button" variant={"outline"} onClick={() => router.back()}>Cancel</Button>
+                <Button className="cursor-pointer" type="submit">Submit</Button>
+              </div>
           </form>
       </Form>
   </div>
