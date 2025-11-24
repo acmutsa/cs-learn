@@ -40,7 +40,7 @@ const AdminNavbar = () => {
               {/* Dashboard */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link href="/admin">Dashboard</Link>
+                  <Link href="/admin/dashboard">Dashboard</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
