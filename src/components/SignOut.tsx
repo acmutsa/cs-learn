@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 export default function LogoutButton() {
     const router = useRouter();
     const handleLogout = async () => {
-        await authClient.signOut();
-        router.refresh();
-        window.location.href = "/sign-in";
-      };
-  
+      await authClient.signOut();
+      router.push("/sign-in");
+      router.refresh();
+    };
+    
     return (
       <Button
         onClick={handleLogout}

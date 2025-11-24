@@ -32,7 +32,8 @@ export default function SignIn() {
       return;
     } else {
       toast.success(result.message)
-      window.location.href = "/home";
+      router.push("/home");
+      router.refresh();
     }
   }
 
