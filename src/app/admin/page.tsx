@@ -10,8 +10,6 @@ export default async function AdminHomePage() {
   // const courseRows = await getCourseRows();
   const courseDifficultyRows = await getCourseDifficultyRows();
   const courseTagRows = await getCourseTagRows();
-  console.log(typeof(courseDifficultyRows));
-  console.log(courseDifficultyRows);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
       <UserRadialChart adminCount={adminRows} regularCount={regularRows}/>
