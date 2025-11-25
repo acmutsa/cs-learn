@@ -1,7 +1,14 @@
 // components/dashboard/GraphCard.tsx
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { ReactNode } from "react";
 
-export default function GraphCard({ title,description, children }) {
+interface GraphCardProps {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}
+
+export default function GraphCard({ title,description, children }: GraphCardProps) {
   return (
     <Card className="shadow-sm">
     <div className="flex flex-col gap-4">

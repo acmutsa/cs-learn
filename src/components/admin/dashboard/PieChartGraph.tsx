@@ -3,15 +3,13 @@ import GraphCard from "./GraphCard";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartConfig, ChartTooltipContent } from "@/components/ui/chart";
 
-/* //uncomment this when the theme is activate
-const palette = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
-*/
+// const palette = [
+//   "hsl(var(--chart-1))",
+//   "hsl(var(--chart-2))",
+//   "hsl(var(--chart-3))",
+//   "hsl(var(--chart-4))",
+//   "hsl(var(--chart-5))",
+// ];
 
 //delete this when the theme is activate
 const palette = [
@@ -22,8 +20,14 @@ const palette = [
   "hsl(260, 70%, 50%)",  // purple
 ];
 
+interface PieChartData {
+  data: {
+    diff: string;
+    count: number;
+  }[];
+}
 
-export default function PieChartGraph({ data }) {
+export default function PieChartGraph({ data }: PieChartData) {
   const totalCourses = data.reduce((sum, item) => sum + item.count, 0);
   const description = "";
   // Build shadcn chart config
@@ -38,7 +42,6 @@ export default function PieChartGraph({ data }) {
   return (
     <GraphCard title="Course Difficulty Distribution">
       <div className="flex flex-col gap-4">
-
         {/* --- Chart --- */}
         <ChartContainer config={chartConfig} className="h-[240px] w-full">
           <ResponsiveContainer width="100%" height="100%">

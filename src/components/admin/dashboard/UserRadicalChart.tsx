@@ -8,22 +8,18 @@ import {
 } from "recharts";
 
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-
-import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   ChartConfig,
 } from "@/components/ui/chart";
 
-export default function UserRadialChart({ adminCount, regularCount }) {
+interface UserRadicalData {
+  adminCount: number;
+  regularCount: number;
+}
+
+export default function UserRadialChart({ adminCount, regularCount }: UserRadicalData) {
   const total = adminCount + regularCount;
   const chartData = [
     {
@@ -63,14 +59,12 @@ export default function UserRadialChart({ adminCount, regularCount }) {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-
             {/* Center label */}
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {
                   if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox))
                     return null;
-
                   return (
                     <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
                       <tspan
@@ -92,7 +86,6 @@ export default function UserRadialChart({ adminCount, regularCount }) {
                 }}
               />
             </PolarRadiusAxis>
-
             {/* Admin */}
             <RadialBar
               stackId="users"
@@ -101,7 +94,6 @@ export default function UserRadialChart({ adminCount, regularCount }) {
               className="stroke-transparent stroke-2"
               fill="var(--chart-1)"
             />
-
             {/* Regular Users */}
             <RadialBar
               stackId="users"
@@ -111,7 +103,6 @@ export default function UserRadialChart({ adminCount, regularCount }) {
               fill="var(--chart-2)"
             />
           </RadialBarChart>
-          
         </ChartContainer>
         <div className="flex items-center justify-center font-medium">
             <ul className="flex flex-col gap-2">
