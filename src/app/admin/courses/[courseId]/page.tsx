@@ -25,9 +25,6 @@ export default async function CourseIdPage({
     getUnitsForCourse(id),
     getLessonsForCourse(id),
   ]);
-  console.log("Courses:", course);
-  console.log("Units:", units);
-  console.log("Lessons:", lessons);
 
   if (!course) {
     return (

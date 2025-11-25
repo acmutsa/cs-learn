@@ -28,3 +28,11 @@ export type CourseWithData = {
   createdBy: string | null;
   tags: string[];
 }
+
+export type DashboardData = {
+  adminCount: number;
+  regularCount: number;
+  totalCourses: number;
+  courseByDifficulty: { diff: string, count: number}[];
+  coursesByTag: { tag: string; count: number }[];
+};
