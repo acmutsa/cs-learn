@@ -1,3 +1,21 @@
-export default function Page() {
-  return (<div>This is the admin page!</div>);
+import type { DashboardData } from "@/lib/types";
+import { getAdminRows, getCourseDifficultyRows, getCourseRows, getCourseTagRows, getRegularRows } from "@/actions/admin/dashboard";
+import UserRadialChart from "@/components/admin/dashboard.tsx/UserRadicalChart";
+import PieChartGraph from "@/components/admin/dashboard.tsx/PieChartGraph";
+import BarChartGraph from "@/components/admin/dashboard.tsx/BarChartGraph";
+
+export default async function AdminHomePage() {
+  const adminRows = await getAdminRows();
+  const regularRows = await getRegularRows();
+  // const courseRows = await getCourseRows();
+  const courseDifficultyRows = await getCourseDifficultyRows();
+  const courseTagRows = await getCourseTagRows();
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+      <UserRadialChart adminCount={adminRows} regularCount={regularRows}/>
+      <PieChartGraph data={courseDifficultyRows}/>
+      <BarChartGraph data={courseTagRows} />
+    </div>
+  );
 }
