@@ -1,10 +1,13 @@
 // src/lib/dashboard-data.ts
 import { db } from "@/db";              // whatever your db import is
 import { users, courses, tags } from "@/db/schema"; // adjust to your tables
-import { sql } from "drizzle-orm";
-
+import { sql, eq } from "drizzle-orm";
+import PieChartGraph from "./PieChartGraph";
+import BarChartGraph from "./BarChartGraph";
+import UserRadialChart from "./UserRadialChart";
 export type DashboardData = {
-  totalUsers: number;
+  adminCount: number;
+  regularCount: number;
   totalCourses: number;
   courseByDifficulty: { diff: string, count: number}[];
   coursesByTag: { tag: string; count: number }[];
@@ -12,11 +15,17 @@ export type DashboardData = {
 
 export async function getDashboardData(): Promise<DashboardData> {
   // total users
-  const usersCountRows = await db
+  const adminRows = await db
     .select({ count: sql<number>`count(*)` })
-    .from(users);
-  const totalUsers = usersCountRows[0]?.count ?? 0;
+    .from(users)
+    .where(eq(users.role, "admin"));
+  const adminCount = adminRows[0]?.count ?? 0;
 
+  const regularRows = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(users)
+    .where(eq(users.role, "user"));
+  const regularCount = regularRows[0]?.count ?? 0;
   // total courses
   const coursesCountRows = await db
     .select({ count: sql<number>`count(*)` })
@@ -54,7 +63,8 @@ export async function getDashboardData(): Promise<DashboardData> {
   }));
 
   return {
-    totalUsers,
+    adminCount,
+    regularCount,
     totalCourses,
     courseByDifficulty,
     coursesByTag,
@@ -66,8 +76,24 @@ export async function getDashboardData(): Promise<DashboardData> {
     const data = await getDashboardData();
 
     return (
+      /*
       <pre className="p-4">
         {JSON.stringify(data, null, 2)}
       </pre>
-    );
+      */
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {/* Radial stacked chart */}
+      <UserRadialChart
+        adminCount={data.adminCount}
+        regularCount={data.regularCount}
+      />
+
+      {/* Difficulty pie chart */}
+      <PieChartGraph data={data.courseByDifficulty} />
+
+      {/* Tag bar chart */}
+      <BarChartGraph data={data.coursesByTag} />
+    </div>
+  );
 };
