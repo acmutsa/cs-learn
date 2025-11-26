@@ -12,12 +12,9 @@ import { getCourseById } from "@/actions/admin/course";
 import { getUnitsForCourse } from "@/actions/admin/units";
 import { getLessonsForCourse } from "@/actions/admin/lesson";
 import Link from "next/link";
+import type { CourseIdPageProps } from "@/lib/types";
 
-export default async function CourseIdPage({ 
-  params 
-}: { 
-  params: Promise<{ courseId: string}> 
-}) {
+export default async function CourseIdPage({ params }: CourseIdPageProps) {
   const { courseId } = await params; 
   const id = Number(courseId);
   const [course, units, lessons] = await Promise.all([
@@ -34,7 +31,7 @@ export default async function CourseIdPage({
   }
 
   return (
-    <div className="flex flex-col gap-4 min-h-[500px] h-[85vh]">
+    <div className="flex flex-col gap-4 min-h-[500px] h-full">
       <div className="flex justify-end gap-4">
         <Link href={`/admin/courses/${id}/lesson/create`}>
           <Button variant={"outline"} className="cursor-pointer">Create Lesson</Button>
@@ -50,7 +47,7 @@ export default async function CourseIdPage({
         </CardTitle>
         <CardDescription className="px-6 text-md">{course.description}</CardDescription>
         <CardContent className="h-full">
-          <CourseController units={units} lessons={lessons} />
+          <CourseController courseId={id} units={units} lessons={lessons} />
         </CardContent>
       </Card>
     </div>

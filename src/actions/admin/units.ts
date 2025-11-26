@@ -40,7 +40,6 @@ export const createUnitAction = adminClient
     };
 });
 
-
 export async function getUnitsForCourse(courseId: number) {
   return await db
     .select()
