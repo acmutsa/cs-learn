@@ -20,6 +20,7 @@ export default async function Navigation() {
   });
   const user = session?.user;
   const isSignedIn = Boolean(user);
+  const isAdmin = user?.role === "admin" ? true : false; 
   const avatarSrc = user?.image ?? "/user.png";
   const displayName = user?.name ?? "User";
   const email = user?.email ?? "";
@@ -37,15 +38,24 @@ export default async function Navigation() {
         <ul className="flex items-center gap-0 md:gap-8 font-semibold">
           {isSignedIn && user ? (
             <>
+              {isAdmin && (
+                <li>
+                  <Button variant={"secondary"} className="text-md md:text-lg text-foreground hover:text-gray-300 transition-all duration-300">
+                    <Link
+                      href="/admin"
+                    >Admin</Link>
+                  </Button>
+                </li>
+              )}
               <li>
-                <Button className="text-md md:text-lg bg-transparent text-foreground hover:text-gray-300 transition-all duration-300">
+                <Button variant="outline" className="text-md md:text-lg text-foreground hover:text-gray-300 transition-all duration-300">
                   <Link
                   href="/explore"
                   >Explore</Link>
                 </Button>
               </li>
               <li>
-                <Button className=" text-md md:text-lg bg-transparent text-foreground  hover:text-gray-300 transition-all duration-300">
+                <Button variant="outline" className="text-md md:text-lg text-foreground  hover:text-gray-300 transition-all duration-300">
                   <Link href="/categories">Categories</Link>
                 </Button>
               </li>

@@ -1,5 +1,4 @@
 "use client";
-
 import GraphCard from "./GraphCard";
 import { ChartContainer, ChartTooltip, ChartConfig, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from "recharts";
@@ -24,47 +23,39 @@ const palette = [
 ];
 
 export default function BarChartGraph({ data }) {
-    const maxValue = Math.max(...data.map((d) => d.count))
-    const chartConfig: ChartConfig = data.reduce((acc, entry, idx) => {
-        acc[entry.tag] = {
-          label: entry.tag,
-          color: palette[idx % palette.length],
-        };
-        return acc;
-      }, {} as ChartConfig);
-      
-      return (
-        <GraphCard title="Courses per Tag" description="">
-            <ResponsiveContainer width="100%" height="100%">
-          <ChartContainer config={chartConfig} className="h-[300px]">
-            
-              <BarChart data={data}>
-                
-                <XAxis dataKey="tag" />
-                <YAxis
-                    ticks={[...Array(maxValue + 1).keys()]}   // [0, 1, 2, ..., max]
-                    domain={[0, maxValue]}
-                    allowDecimals={false}
-                    />
+  const maxValue = Math.max(...data.map((d) => d.count))
+  const chartConfig: ChartConfig = data.reduce((acc, entry, idx) => {
+    acc[entry.tag] = {
+      label: entry.tag,
+      color: palette[idx % palette.length],
+    };
+    return acc;
+  }, {} as ChartConfig);
     
-                {/* Shadcn style tooltip */}
-                <ChartTooltip content={<ChartTooltipContent />} />
-    
-                <Bar dataKey="count">
-                  {data.map((entry) => (
-                    <Cell
-                      key={entry.tag}
-                      fill={chartConfig[entry.tag].color}
-                    />
-                  ))}
-
-                
-                  
-                </Bar>
-              </BarChart>
-            
-          </ChartContainer>
-          </ResponsiveContainer>
-        </GraphCard>
-      );
+  return (
+    <GraphCard title="Courses per Tag" description="">
+      <ResponsiveContainer width="100%" height="100%" >
+        <ChartContainer config={chartConfig}>
+          <BarChart data={data}>
+            <XAxis dataKey="tag" />
+            <YAxis
+                ticks={[...Array(maxValue + 1).keys()]}   // [0, 1, 2, ..., max]
+                domain={[0, maxValue]}
+                allowDecimals={false}
+                />
+            {/* Shadcn style tooltip */}
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="count">
+              {data.map((entry) => (
+                <Cell
+                  key={entry.tag}
+                  fill={chartConfig[entry.tag].color}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </ResponsiveContainer>
+    </GraphCard>
+  );
 }
