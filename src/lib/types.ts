@@ -36,3 +36,7 @@ export type DashboardData = {
   courseByDifficulty: { diff: string, count: number}[];
   coursesByTag: { tag: string; count: number }[];
 };
+
+export type CourseIdPageProps = {
+  params: Promise<{ courseId: string }>;
+};

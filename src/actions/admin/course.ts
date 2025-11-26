@@ -3,8 +3,10 @@ import { adminClient } from "@/lib/safe-action";
 import { coursesTags, courses, users, tags } from "@/db/schema";
 import { courseSchema, type CourseFormValues } from "@/lib/validations/course";
 import { db } from "@/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { CourseWithData } from "@/lib/types";
+import { units, lessons } from "@/db/schema";
+import { z } from "zod";
 
 export const createCourseAction = adminClient
   .schema(courseSchema)
@@ -110,3 +112,89 @@ export async function getCourseById(id: number) {
 
   return course;
 }
+
+export const updateLessonUnitOrder = adminClient
+  .schema(
+    z.object({
+      updatedUnits: z.array(
+        z.object({
+          id: z.number(),
+          position: z.number(),
+        })
+      ),
+      updatedLessons: z.array(
+        z.object({
+          id: z.number(),
+          unitId: z.number(),
+          position: z.number(),
+        })
+      ),
+    })
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { updatedUnits, updatedLessons } = parsedInput;
+
+    try {
+      // --- Step 1: Validate unit IDs exist ---
+      const dbUnits = await db.select().from(units).where(inArray(units.id, updatedUnits.map(u => u.id)));
+      if (dbUnits.length !== updatedUnits.length) {
+        return { success: false, message: "One or more units are invalid." };
+      }
+
+      // --- Step 2: Validate lesson IDs exist ---
+      const dbLessons = await db.select().from(lessons).where(inArray(lessons.id, updatedLessons.map(l => l.id)));
+      if (dbLessons.length !== updatedLessons.length) {
+        return { success: false, message: "One or more lessons are invalid." };
+      }
+
+      // --- Step 3: Check unique and sequential positions for units ---
+      const unitPositions = updatedUnits.map(u => u.position);
+      const uniqueUnitPositions = new Set(unitPositions);
+      if (uniqueUnitPositions.size !== updatedUnits.length) {
+        return { success: false, message: "Duplicate positions found for units." };
+      }
+
+      const sortedUnitPositions = [...unitPositions].sort((a, b) => a - b);
+      for (let i = 0; i < sortedUnitPositions.length; i++) {
+        if (sortedUnitPositions[i] !== i + 1) {
+          return { success: false, message: "Unit positions must be sequential starting from 1." };
+        }
+      }
+
+      // --- Step 4: Check unique and sequential positions for lessons within each unit ---
+      const lessonsByUnit = updatedLessons.reduce((acc: Record<number, number[]>, l) => {
+        if (!acc[l.unitId]) acc[l.unitId] = [];
+        acc[l.unitId].push(l.position);
+        return acc;
+      }, {} as Record<number, number[]>);
+
+      for (const unitId in lessonsByUnit) {
+        const positions = lessonsByUnit[unitId].sort((a, b) => a - b);
+        for (let i = 0; i < positions.length; i++) {
+          if (positions[i] !== i + 1) {
+            return { success: false, message: `Lesson positions in unit ${unitId} must be sequential starting from 1.` };
+          }
+        }
+      }
+
+      // --- Step 5: Update within a transaction ---
+      await db.transaction(async (tx) => {
+        for (const unit of updatedUnits) {
+          await tx.update(units)
+            .set({ position: unit.position })
+            .where(eq(units.id, unit.id));
+        }
+
+        for (const lesson of updatedLessons) {
+          await tx.update(lessons)
+            .set({ position: lesson.position, unitId: lesson.unitId })
+            .where(eq(lessons.id, lesson.id));
+        }
+      });
+
+      return { success: true, message: "Units and lessons order updated successfully." };
+    } catch (error) {
+      console.error("Failed to update lesson/unit order", error);
+      return { success: false, message: "Failed to update order." };
+    }
+  });
