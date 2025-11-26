@@ -9,12 +9,9 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import type { CourseIdPageProps } from "@/lib/types"; 
 
-type PageProps = {
-  params: Promise<{ courseId: string }>;
-};
-
-export default async function CreateLessonPage({ params }: PageProps) {
+export default async function CreateLessonPage({ params }: CourseIdPageProps) {
   const { courseId } = await params;
   const id = Number(courseId);
 

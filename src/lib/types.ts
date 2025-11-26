@@ -28,3 +28,7 @@ export type CourseWithData = {
   createdBy: string | null;
   tags: string[];
 }
+
+export type CourseIdPageProps = {
+  params: Promise<{ courseId: string }>;
+};
