@@ -141,6 +141,8 @@ const columns: ColumnDef<CourseWithData>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const course = row.original;
+      
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -151,11 +153,10 @@ const columns: ColumnDef<CourseWithData>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => console.log("edit")}
-            >
-              Edit
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/courses/${course.id}/edit`} className="cursor-pointer">
+                Edit
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
