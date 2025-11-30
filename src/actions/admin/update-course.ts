@@ -16,7 +16,7 @@ const updateCourseSchema = z.object({
 });
 
 export const updateCourseAction = adminClient
-  .schema(updateCourseSchema)
+  .inputSchema(updateCourseSchema)
   .action(async ({ parsedInput }) => {
     const { id, title, description, difficulty, tags: tagNames } = parsedInput;
 

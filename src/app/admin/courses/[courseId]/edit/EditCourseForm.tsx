@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { useAction } from "next-safe-action/hooks";
 
 // zod form validation schema
 const formSchema = z.object({
@@ -27,6 +28,16 @@ export default function EditCourseForm({ course }: { course: any }) {
   // holds any server side validation errors from the action
   const [serverError, setServerError] = useState("");
 
+  const {executeAsync: updateCourse} = useAction(updateCourseAction, {
+    onSuccess: () => {
+      router.push("/admin/courses");
+    },
+    onError: ({error}) => {
+      console.log(error);
+      setServerError(error.serverError ?? "Something went wrong");
+    },
+  });
+
   // react-hook-form setup with Zod resolver and default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,19 +54,10 @@ export default function EditCourseForm({ course }: { course: any }) {
 
     // run async update inside startTransition for smoother UX
     startTransition(async () => {
-      const result = await updateCourseAction({
+      await updateCourse({
         id: course.id, // pass the course id
         ...values,     // pass updated form values
       });
-
-      // server error handling
-      if (result?.serverError) {
-        setServerError(result.serverError);
-        return;
-      }
-
-      // on success, redirect back to admin course list
-      router.push("/admin/courses");
     });
   };
 
