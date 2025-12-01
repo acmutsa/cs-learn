@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { courses } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import EditCourseForm from "./EditCourseForm";
+import EditCourseForm from "@/components/admin/course/EditCourseForm";
 
 export default async function EditCoursePage({
   params,

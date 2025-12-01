@@ -11,7 +11,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/actions/authentication";
+import { signIn } from "@/actions/auth/authentication";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");

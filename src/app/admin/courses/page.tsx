@@ -1,4 +1,4 @@
-import CourseTable from "@/components/admin/CourseTable";
+import CourseTable from "@/components/admin/course/CourseTable";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

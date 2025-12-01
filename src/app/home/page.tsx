@@ -1,4 +1,4 @@
-import { CourseCard } from "@/components/course-card";
+import { CourseCard } from "@/components/client/course-card";
 
 // sample data - replace with real data later
 const inProgressCourses = [

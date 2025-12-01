@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LogoutButton from "./SignOut";
+import LogoutButton from "../auth/SignOutButton";
 import { headers } from "next/headers"
 import {
   DropdownMenu,

@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { courses } from "@/db/schema";
 import { desc } from "drizzle-orm";
-import { ExploreCoursesClient } from "@/components/ExploreCoursesClient";
+import { ExploreCoursesClient } from "@/components/client/ExploreCoursesClient";
 
 export default async function ExplorePage() {
   const session = await auth.api.getSession({

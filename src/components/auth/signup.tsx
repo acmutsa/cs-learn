@@ -16,7 +16,7 @@ import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/actions/authentication";
+import { signUp } from "@/actions/auth/authentication";
 
 export default function SignUp() {
     const [firstName, setFirstName] = useState("");

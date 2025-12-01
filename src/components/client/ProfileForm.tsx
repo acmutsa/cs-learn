@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updateProfile } from "@/actions/update-profile";
+import { updateProfile } from "@/actions/client/update-profile";
 
 type ProfileFormProps = {
   name: string;

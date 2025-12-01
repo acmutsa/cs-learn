@@ -1,4 +1,4 @@
-import TagTable from "@/components/admin/TagTable";
+import TagTable from "@/components/admin/tag/TagTable";
 
 export default function TagPage() {
   return (
