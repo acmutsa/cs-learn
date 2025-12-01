@@ -18,7 +18,6 @@ export async function updateProfile(formData: FormData) {
     throw new Error("Not authenticated");
   }
 
-  // ✅ same fix – no Number(...)
   const userId = session.user.id as any;
 
   const name = formData.get("name");
