@@ -39,10 +39,10 @@ CREATE TABLE `courses` (
 	`title` text NOT NULL,
 	`description` text,
 	`difficulty` text DEFAULT 'beginner' NOT NULL,
-	`createdBy` integer,
+	`created_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`createdBy`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE TABLE `courses_tags` (
@@ -57,6 +57,8 @@ CREATE TABLE `courses_tags` (
 CREATE TABLE `lessons` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`unitId` integer NOT NULL,
+	`title` text NOT NULL,
+	`description` text,
 	`media_type` text DEFAULT 'markdown' NOT NULL,
 	`content_url` text,
 	`contentBlobId` integer,
@@ -74,15 +76,17 @@ CREATE TABLE `lessons` (
 CREATE TABLE `tags` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`tag_name` text NOT NULL,
+	`created_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null,
 	CONSTRAINT "tags_tag_name_check" CHECK("tags"."tag_name" IS NOT NULL)
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `tags_tag_name_unique` ON `tags` (`tag_name`);--> statement-breakpoint
 CREATE TABLE `units` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`course_id` text NOT NULL,
+	`course_id` integer NOT NULL,
 	`title` text,
 	`position` integer DEFAULT 1 NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,

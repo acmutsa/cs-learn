@@ -1,8 +1,12 @@
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ courseId: string }>;
-}) {
+import UnitForm from "@/components/admin/unit/UnitForm";
+import type { CourseIdPageProps } from "@/lib/types";
+
+export default async function Page({ params }: CourseIdPageProps) {
   const { courseId } = await params;
-  return <div>Creating new unit for course {courseId}</div>;
+  const id = Number(courseId);
+  return (
+    <div className="flex justify-center">
+      <UnitForm courseId={id}/>
+    </div>
+  );
 }

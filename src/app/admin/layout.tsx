@@ -1,5 +1,5 @@
 import React from "react";
-import AdminNavbar from "@/components/AdminNavbar";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 export default function AdminLayout({
   children,
@@ -8,15 +8,10 @@ export default function AdminLayout({
 }>) {
   return (
     <section className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
-      {/* Top nav bar */}
       <AdminNavbar />
-
-      {/* Page content */}
       <main className="flex-1 p-6">
         {children}
       </main>
-
-      {/* Footer */}
     </section>
   );
 }
