@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ProfileForm } from "./ProfileForm";
+import { ProfileForm } from "@/components/ProfileForm";
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({
