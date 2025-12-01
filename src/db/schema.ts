@@ -40,6 +40,9 @@ export const tags = sqliteTable(
   {
     id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
     tagName: text("tag_name").notNull().unique(),
+    createdBy: text("created_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(now()),
@@ -58,7 +61,7 @@ export const courses = sqliteTable("courses", {
   difficulty: text("difficulty", { enum: difficultyValues })
     .notNull()
     .default("beginner"),
-  createdBy: integer({ mode: "number" }).references(() => users.id, {
+  createdBy: text("created_by").references(() => users.id, {
     onDelete: "set null",
   }),
 
@@ -94,7 +97,7 @@ export const units = sqliteTable(
   "units",
   {
     id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-    courseId: text("course_id")
+    courseId: integer("course_id")
       .notNull()
       .references(() => courses.id, { onDelete: "cascade" }),
     title: text("title"),
@@ -153,18 +156,17 @@ export const lessons = sqliteTable(
     unitId: integer({ mode: "number" })
       .notNull()
       .references(() => units.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description"),
     mediaType: text("media_type", { enum: mediaTypeValues })
       .notNull()
       .default("markdown"),
-
     contentUrl: text("content_url"), // e.g., https://youtube.com/...
     contentBlobId: integer({ mode: "number" }).references(() => blobs.id, {
       onDelete: "set null",
     }),
-
     metadata: text("metadata").notNull().default("{}"), // store JSON string; parse in app
     position: integer("position").notNull().default(1),
-
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(now()),
@@ -225,8 +227,12 @@ export const attachments = sqliteTable(
   ]
 );
 
-export const tagsRelations = relations(tags, ({ many }) => ({
+export const tagsRelations = relations(tags, ({ many, one }) => ({
   coursesTags: many(coursesTags),
+  creator: one(users, {
+    fields: [tags.createdBy],
+    references: [users.id],
+  }),
 }));
 
 export const coursesRelations = relations(courses, ({ many, one }) => ({

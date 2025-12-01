@@ -1,7 +1,7 @@
 "use client";
-
-import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -18,6 +18,18 @@ const today = new Date().toLocaleDateString(undefined, {
 });
 
 const AdminNavbar = () => {
+  const pathname = usePathname();
+  const segment = pathname.split('/');
+  const isActive = (href: string) => {
+    if (pathname === href) {
+      return true;
+    }
+    const temp = "/" + segment[1] + "/" +segment[2];
+    if (temp === href) {
+      return true;
+    }
+    return false;
+  }
   return (
     <header className="border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/60">
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center px-3 sm:px-4 lg:px-5">
@@ -39,28 +51,28 @@ const AdminNavbar = () => {
 
               {/* Dashboard */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={isActive("/admin") ? "bg-accent dark:bg-accent" : "bg-background"}>
                   <Link href="/admin">Dashboard</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Courses */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={isActive("/admin/courses") ? "bg-accent dark:bg-accent" : "bg-background"}>
                   <Link href="/admin/courses">Courses</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Tags */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={isActive("/admin/tags") ? "bg-accent dark:bg-accent" : "bg-background"}>
                   <Link href="/admin/tags">Tags</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Users */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={isActive("/admin/users") ? "bg-accent dark:bg-accent" : "bg-background"}>
                   <Link href="/admin/users">Users</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

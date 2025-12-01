@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "290fabe9-d6c5-45be-9a49-3e45bff22253",
+  "id": "07ece851-eea4-4bc0-8cdf-2898908a6164",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attachments": {
@@ -284,9 +284,9 @@
           "autoincrement": false,
           "default": "'beginner'"
         },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "integer",
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -310,12 +310,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "courses_createdBy_users_id_fk": {
-          "name": "courses_createdBy_users_id_fk",
+        "courses_created_by_users_id_fk": {
+          "name": "courses_created_by_users_id_fk",
           "tableFrom": "courses",
           "tableTo": "users",
           "columnsFrom": [
-            "createdBy"
+            "created_by"
           ],
           "columnsTo": [
             "id"
@@ -410,6 +410,20 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "media_type": {
@@ -530,6 +544,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -556,7 +577,21 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tags_created_by_users_id_fk": {
+          "name": "tags_created_by_users_id_fk",
+          "tableFrom": "tags",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {
@@ -578,7 +613,7 @@
         },
         "course_id": {
           "name": "course_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
