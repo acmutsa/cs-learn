@@ -1,4 +1,3 @@
-// src/app/courses/ExploreCoursesClient.tsx
 "use client";
 
 import { useMemo, useState } from "react";

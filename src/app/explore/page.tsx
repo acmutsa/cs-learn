@@ -1,10 +1,9 @@
-// src/app/explore/page.tsx
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { courses } from "@/db/schema";
 import { desc } from "drizzle-orm";
-import { ExploreCoursesClient } from "./ExploreCoursesClient";
+import { ExploreCoursesClient } from "@/components/ExploreCoursesClient";
 
 export default async function ExplorePage() {
   const session = await auth.api.getSession({
@@ -19,7 +18,7 @@ export default async function ExplorePage() {
     .orderBy(desc(courses.createdAt));
 
   return (
-    <div className="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-6xl mx-auto py-10 px-4">
       <ExploreCoursesClient
         courses={allCourses.map((c) => ({
           id: c.id,
