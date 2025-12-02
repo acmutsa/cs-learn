@@ -3,6 +3,7 @@
 import {
   sqliteTable,
   text,
+  blob,
   integer,
   primaryKey,
   check,
@@ -161,10 +162,7 @@ export const lessons = sqliteTable(
     mediaType: text("media_type", { enum: mediaTypeValues })
       .notNull()
       .default("markdown"),
-    contentUrl: text("content_url"), // e.g., https://youtube.com/...
-    contentBlobId: integer({ mode: "number" }).references(() => blobs.id, {
-      onDelete: "set null",
-    }),
+    content: blob(),
     metadata: text("metadata").notNull().default("{}"), // store JSON string; parse in app
     position: integer("position").notNull().default(1),
     createdAt: integer("created_at", { mode: "timestamp" })
@@ -176,14 +174,14 @@ export const lessons = sqliteTable(
   },
   (t) => [
     check("lessons_position_check", sql`${t.position} >= 1`),
-    check(
-      "lessons_content_presence_check",
-      sql`(${t.contentUrl} IS NOT NULL AND ${t.contentBlobId} IS NULL) OR (${t.contentUrl} IS NULL AND ${t.contentBlobId} IS NOT NULL)`
-    ),
-    check(
-      "lessons_url_shape_check",
-      sql`(${t.contentUrl} IS NULL OR ${t.contentUrl} GLOB 'http*://*')`
-    ),
+    // check(
+    //   "lessons_content_presence_check",
+    //   sql`(${t.contentUrl} IS NOT NULL AND ${t.contentBlobId} IS NULL) OR (${t.contentUrl} IS NULL AND ${t.contentBlobId} IS NOT NULL)`
+    // ),
+    // check(
+    //   "lessons_url_shape_check",
+    //   sql`(${t.contentUrl} IS NULL OR ${t.contentUrl} GLOB 'http*://*')`
+    // ),
   ]
 );
 
@@ -265,16 +263,16 @@ export const blobsRelations = relations(blobs, ({ one, many }) => ({
     fields: [blobs.createdBy],
     references: [users.id],
   }),
-  lessons: many(lessons),
+  // lessons: many(lessons),
   attachments: many(attachments),
 }));
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   unit: one(units, { fields: [lessons.id], references: [units.id] }),
-  blob: one(blobs, {
-    fields: [lessons.contentBlobId],
-    references: [blobs.id],
-  }),
+  // blob: one(blobs, {
+  //   fields: [lessons.contentBlobId],
+  //   references: [blobs.id],
+  // }),
   attachments: many(attachments),
 }));
 

@@ -8,6 +8,13 @@
       "when": 1764021220798,
       "tag": "0000_mixed_stephen_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1764651862682,
+      "tag": "0001_plain_naoko",
+      "breakpoints": true
     }
   ]
 }
