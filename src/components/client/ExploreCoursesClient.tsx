@@ -76,7 +76,7 @@ export function ExploreCoursesClient({
         : null;
 
     return (
-      <Link key={course.id} href={`/courses/${course.id}`}>
+      <Link key={course.id} href={`/course/${course.id}`}>
         <Card className="h-full transition hover:border-primary/60 hover:shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between gap-2">
