@@ -33,6 +33,44 @@ export async function createUser(data: { name: string; email: string; role: stri
   }
 }
 
+
+//delete user role
+export async function deleteUser(id: string): Promise<CreateResponse> {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  if (!session) throw new Error("Unauthorized");
+  try {
+    const user = await db.select().from(users).where(eq(users.id, id));
+    if (user.length === 0) {
+      return { success: false, message: "User not found." };
+    }
+    await db.delete(users).where(eq(users.id, id));
+    return { success: true, message: "User deleted successfully!" };
+  } catch (error) {
+    return { success: false, message: "Failed to delete user." };
+  }
+}
+
+export async function updateUserRole(id: string, newRole: string): Promise<CreateResponse> {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  if (!session) throw new Error("Unauthorized");
+
+  try{
+    const user = await db.select().from(users).where(eq(users.id, id));
+    if (user.length === 0) {
+      return { success: false, message: "User not found." };
+    }
+    await db.update(users).set({ role: newRole }).where(eq(users.id, id));
+    return { success: true, message: "User role updated successfully!" };
+  } catch (error) { 
+    return { success: false, message: "Failed to update user role." };
+  }
+}
+
+
 // Get all users with optional stats (customize as needed)
 export async function getAllUsersData(): Promise<Users[]> {
   const result = await db

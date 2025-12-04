@@ -13,7 +13,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
+import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -35,11 +35,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { getAllTagsData } from "@/actions/admin/tag";
 import { Users } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { get } from "http";
-import { getAllRegularUsers } from "@/actions/admin/user";
+
+import { getAllRegularUsers, getAllUsers } from "@/actions/admin/user";
+
+const session = await auth.api.getSession({ headers: req.headers });
+const isSuperAdmin = session?.user.role === "superadmin";;
+
 
 
 const columns: ColumnDef<Users>[] = [
@@ -160,7 +163,13 @@ export default function Usertable() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const result = await getAllRegularUsers();
+    let result;
+    if (!isSuperAdmin){
+      result = await getAllRegularUsers();
+    }else{
+      result = await getAllUsers();
+    }
+      
     setUsers(result);
     setLoading(false);
   };
