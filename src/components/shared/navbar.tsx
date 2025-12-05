@@ -20,8 +20,10 @@ export default async function Navigation() {
   });
   const user = session?.user;
   const isSignedIn = Boolean(user);
-  const isAdmin = user?.role === "admin" ? true : false; 
-  const avatarSrc = user?.image ?? "/user.png";
+  //const isAdmin = user?.role === "admin" ? true : false;
+  const isAdmin = ["admin", "super admin"].includes(user?.role ?? "");
+
+  const avatarSrc = user?.image ?? "/user.png"; //default
   const displayName = user?.name ?? "User";
   const email = user?.email ?? "";
 

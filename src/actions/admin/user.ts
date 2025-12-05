@@ -1,9 +1,9 @@
 'use server';
-import { users } from "@/db/schema";
+import { users, accounts } from "@/db/schema";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // Types you may want to define in "@/lib/types"
 import { CreateResponse, Users} from "@/lib/types";
@@ -99,13 +99,20 @@ export async function updateUserEmail(id: string, email: string): Promise<Create
   if (!session) throw new Error("Unauthorized");
 
   try{
-    const user = await db.select().from(users).where(eq(users.id, id));
-    if (user.length === 0) {
-      return { success: false, message: "User not found." };
-    }
-    await db.update(users).set({ email: Email }).where(eq(users.id, id));
-    return { success: true, message: "Name updated successfully!"};
-  } catch (error) { 
+      await db.transaction(async (tx) => {
+      const user = await tx.select().from(users).where(eq(users.id, id));
+      if (!user.length) throw new Error("User not found.");
+
+      await tx.update(users).set({ email }).where(eq(users.id, id));
+
+      await tx
+        .update(accounts)
+        .set({ accountId: email })
+        .where(and(eq(accounts.userId, id), eq(accounts.providerId, "email")));
+    });
+
+    return { success: true, message: "Email updated successfully!" };
+  } catch (error) {
     return { success: false, message: "Failed to update user role." };
   }
 }

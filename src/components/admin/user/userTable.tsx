@@ -66,7 +66,7 @@ export default function Usertable({user , isSuperAdmin }) : Props {
   };
 
 
-  const columns: ColumnDef<Users>[] = [
+  const columns = React.useMemo<ColumnDef<Users>[]>(() => [
     {
       id: "select",
       header: ({ table }) => (
@@ -107,7 +107,8 @@ export default function Usertable({user , isSuperAdmin }) : Props {
           </div>
         )
       },
-      cell: ({ row }) => {
+      cell: ({ row, table }) => {
+        const { editRowId, draft, setDraft } = table.options.meta!;
         const isEditing = editRowId === row.original.id;
         if(!isEditing) return <div className="text-left pl-3">{row.getValue("name")}</div>;
         return (
@@ -136,12 +137,14 @@ export default function Usertable({user , isSuperAdmin }) : Props {
         )
       },
       cell: ({ row }) => {
+        const { editRowId, draft, setDraft } = table.options.meta!;
         const isEditing = editRowId === row.original.id;
         if(!isEditing) return <div className="text-left pl-3">{row.getValue("email")}</div>
         return (
           <Input 
             value={draft?.email?? ""}
-            onChange={(e) => setDraft((d) => d? {...d, email: e.target.value} : d)}
+            onChange={(e) => setDraft((d) => ({ ...(d ?? {}), email: e.target.value }))
+          }
             className="h-8"
           />
         )
@@ -150,6 +153,7 @@ export default function Usertable({user , isSuperAdmin }) : Props {
     {
       accessorKey: "role",
       header: ({ column }) => {
+        
         return (
           <div className="text-left">
             <Button
@@ -163,16 +167,28 @@ export default function Usertable({user , isSuperAdmin }) : Props {
           </div>
         )
       },
-      cell: ({ row }) => 
-
-        <div className="pr-3">{row.getValue("role")}</div>
+      cell: ({ row }) => {
+        const { editRowId, draft, setDraft } = table.options.meta!;
+        const isEditing = editRowId === row.original.id;
+        if(!isEditing || !isSuperAdmin) return <div className="pr-3">{row.getValue("role")}</div>;
+        return (
+          <Input
+            value={draft?.role?? ""}
+            onChange={(e) => setDraft((d) => d ? { ...d, role: e.target.value } : d)}
+            className="h-8"
+          />
+        );
+      },
+        
+        
       
         
     },
     {
       id: "actions",
       enableHiding: false,
-      cell: ({ row }) => {
+      cell: ({ row, table}) => {
+        const {editRowId, save, cancelEdit} = table.options.meta!;
         const isEditing = editRowId === row.original.id;
 
         if (isEditing) {
@@ -213,7 +229,7 @@ export default function Usertable({user , isSuperAdmin }) : Props {
         );
       },
     },
-  ]
+  ], []);
   const fetchUsers = async () => {
     setLoading(true);
     let result;
@@ -242,6 +258,7 @@ export default function Usertable({user , isSuperAdmin }) : Props {
   const table = useReactTable({
     data: data,
     columns,
+    meta: {editRowId, draft, setDraft, cancelEdit, save},
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
