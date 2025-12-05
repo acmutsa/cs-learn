@@ -71,6 +71,47 @@ export async function updateUserRole(id: string, newRole: string): Promise<Creat
 }
 
 
+
+export async function updateUserName(id: string, name: string): Promise<CreateResponse> {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) throw new Error("Unauthorized");
+
+  try{
+    const user = await db.select().from(users).where(eq(users.id, id));
+    if (user.length === 0) {
+      return { success: false, message: "User not found." };
+    }
+    await db.update(users).set({ name: name }).where(eq(users.id, id));
+    return { success: true, message: "Name updated successfully!"};
+  } catch (error) { 
+    return { success: false, message: "Failed to update user role." };
+  }
+}
+
+export async function updateUserEmail(id: string, email: string): Promise<CreateResponse> {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) throw new Error("Unauthorized");
+
+  try{
+    const user = await db.select().from(users).where(eq(users.id, id));
+    if (user.length === 0) {
+      return { success: false, message: "User not found." };
+    }
+    await db.update(users).set({ email: Email }).where(eq(users.id, id));
+    return { success: true, message: "Name updated successfully!"};
+  } catch (error) { 
+    return { success: false, message: "Failed to update user role." };
+  }
+}
+
+
+
 // Get all users with optional stats (customize as needed)
 export async function getAllUsersData(): Promise<Users[]> {
   const result = await db
