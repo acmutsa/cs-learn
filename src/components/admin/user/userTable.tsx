@@ -37,9 +37,9 @@ import {
 } from "@/components/ui/table"
 
 import { Users } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
-import { getAllRegularUsers, getAllUsers, updateUserEmail, updateUserName } from "@/actions/admin/user";
+import { getAllRegularUsers, getAllUsers, updateUserEmail, updateUserName, deleteUser } from "@/actions/admin/user";
 
 
 type Props = { user: Users[]; isSuperAdmin: boolean };
@@ -50,7 +50,22 @@ export default function Usertable({user , isSuperAdmin }) : Props {
   const [loading, setLoading] = useState(true);
   const [editRowId, setEditRowId] = useState<string | null>(null);
   const [draft, setDraft] = useState<{name: string; email: string; role: string} | null>(null);
-
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scheduleDelete = (id: string) => {
+    setPendingDeleteId(id);
+    timeoutRef.current = setTimeout(async () => {
+      await deleteUser(id);
+      timeoutRef.current = null;
+      setPendingDeleteId(null);
+      fetchUsers(); // refresh data
+    }, 30000);
+  };
+  const cancelPendingDelete = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+    setPendingDeleteId(null);
+  };
   const startEdit = (row: Users) => {
     setEditRowId(row.id);
     setDraft({ name: row.name, email: row.email, role: row.role });
@@ -219,11 +234,23 @@ export default function Usertable({user , isSuperAdmin }) : Props {
                 Edit User
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => console.log("delete user")}
-              >Delete User
-              </DropdownMenuItem>
+              {isSuperAdmin && (
+                pendingDeleteId === row.original.id ? (
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive"
+                    onClick={cancelPendingDelete}
+                  >
+                    Undo Delete
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive"
+                    onClick={() => scheduleDelete(row.original.id)}
+                  >
+                    Delete User
+                  </DropdownMenuItem>
+                )
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );
