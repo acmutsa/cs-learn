@@ -1,246 +1,105 @@
-"use client";
-import React from "react";
+// src/app/course/[courseId]/[lessonId]/page.tsx
+
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { eq } from "drizzle-orm";
+import { ChevronLeft } from "lucide-react";
+
+// DB Imports
+import { db } from "@/db"; // Ensure this path points to your Drizzle client instance
+import { lessons } from "@/db/schema";
+
+// Components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Play, Captions, Download, FileText, CheckCircle2, ChevronDown, ExternalLink, Paperclip, BookOpen, NotebookPen, ChevronLeft, ChevronRight } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { MarkdownViewer } from "@/components/client/markdown-viewer"; // Based on your screenshot folder structure
 
-/**
- * Framework-only lesson page using dummy data.
- * Drop this into a Next.js route like app/courses/[courseId]/[lessonId]/page.tsx and wire to real data later.
- */
-export default function LessonPage() {
-  // --- Dummy data until DB is wired ---
-  const course = {
-    id: "course-ux101",
-    title: "Intro to Web Development",
-    unitTitle: "Unit 1: Fundamentals",
-    progress: 45,
-  };
+interface LessonPageProps {
+  params: Promise<{
+    courseId: string;
+    lessonId: string;
+  }>;
+}
 
-  const lesson = {
-    id: "lesson-10",
-    number: 10,
-    title: "Next.js Application fundamentals",
-    duration: "14:36",
-    summary:
-      "Learn how to build a simple application with nextjs, from setting up the project to deploying it.",
-    attachments: [
-    { id: "a1", name: "Slides", size: "2.3 MB" },
-    { id: "a2", name: "Lab ", size: "140 KB" },
-    { id: "a3", name: "Worksheet ", size: "410 KB" },
-    ],
-    resources: [
-      { id: "r1", label: "Next js Tutorial", href: "#" },
-      { id: "r2", label: "Tailwindcss docs", href: "#" },
-    ],
-  };
+export default async function LessonPage({ params }: LessonPageProps) {
+  // 1. Await params (Next.js 15 requirement)
+  const { courseId, lessonId } = await params;
+  const lId = parseInt(lessonId);
 
-  const unitLessons = [
-    { id: "l1", title: "What is a NextJs?", duration: "08:24", status: "done" },
-    { id: "l2", title: "Part 2", duration: "12:10", status: "done" },
-    { id: "l3", title: "Part 3", duration: "09:03", status: "done" },
-    { id: "l4", title: "Part 4", duration: "14:36", status: "current" },
-    { id: "l5", title: "Part 5", duration: "16:50", status: "locked" },
-  ];
+  if (isNaN(lId)) return notFound();
+
+  // 2. Fetch the lesson from the database
+  // We use findFirst to get the specific lesson data
+  const lesson = await db.query.lessons.findFirst({
+    where: eq(lessons.id, lId),
+    with: {
+      unit: true, // Fetch unit info for context (optional)
+    },
+  });
+
+  if (!lesson) {
+    return notFound();
+  }
+
+  // 3. Convert the BLOB content to a String
+  // The schema defines content as 'blob()', so we must decode it.
+  let contentString = "";
+  
+  if (lesson.content) {
+    if (typeof lesson.content === 'string') {
+       // Safety check: if it was somehow stored as string
+       contentString = lesson.content;
+    } else if (Buffer.isBuffer(lesson.content)) {
+       // Standard Node.js Buffer
+       contentString = lesson.content.toString("utf-8");
+    } else {
+       // Fallback for Uint8Array (common in some Drizzle adapters)
+       contentString = new TextDecoder().decode(lesson.content as unknown as Uint8Array);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Page container without navbar/footer; those will be injected elsewhere */}
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 p-4 md:grid-cols-[1fr_320px] md:p-8">
-        {/* LEFT: Main content */}
-        <div className="space-y-6">
-          {/* Lesson header */}
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Lesson {lesson.number}: {lesson.title}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{course.title} • {course.unitTitle} • {lesson.duration}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">Draft UI</Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    Actions <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Mark complete</DropdownMenuItem>
-                  <DropdownMenuItem>Report issue</DropdownMenuItem>
-                  <DropdownMenuItem>Bookmark</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-
-          {/* Media / Viewer */}
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
-              <div className="space-y-1">
-                <CardTitle className="text-xl">Lesson Viewer</CardTitle>
-                <CardDescription>{lesson.summary}</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="secondary" className="gap-2"><Play className="h-4 w-4"/>Play</Button>
-                <Button size="sm" variant="outline" className="gap-2"><ExternalLink className="h-4 w-4"/>Open in new tab</Button>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              {/* Video/Player placeholder */}
-                <AspectRatio ratio={16/9} className="w-full overflow-hidden rounded-xl bg-muted/60 ring-1 ring-border">
-                    <div className="flex h-full w-full items-center justify-center">
-                        <div className="flex flex-col items-center">
-                            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/15">
-                                <Play className="h-6 w-6" />
-                            </div>
-                            <p className="text-sm text-muted-foreground">Video placeholder (wire to player later)</p>
-                        </div>
-                    </div>
-                </AspectRatio>
-            </CardContent>
-          </Card>
-
-          <Tabs defaultValue="transcript" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="transcript" className="gap-2"><Captions className="h-4 w-4"/>Transcript</TabsTrigger>
-              <TabsTrigger value="attachments" className="gap-2"><Paperclip className="h-4 w-4"/>Attachments</TabsTrigger>
-              <TabsTrigger value="notes" className="gap-2"><NotebookPen className="h-4 w-4"/>Notes</TabsTrigger>
-              <TabsTrigger value="resources" className="gap-2"><BookOpen className="h-4 w-4"/>Resources</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="transcript" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Lesson Transcript</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="mb-2 text-sm leading-relaxed">
-                        Welcome to this lesson on React components. In this video, we will explore the fundamentals of building user interfaces using React. React is a popular JavaScript library for building interactive and dynamic web applications...
-                    </p>
-                </CardContent>
-              </Card>
-            </TabsContent >
-            {/* Attachments */}
-            <TabsContent value="attachments" className="mt-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-base">Lesson files</CardTitle>
-                        <CardDescription>Download reference materials for this lesson.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="divide-y">
-                        {lesson.attachments.map((f) => (
-                            <li key={f.id} className="flex items-center justify-between py-3">
-                                <div className="flex items-center gap-3">
-                                    <FileText className="h-5 w-5" />
-                                    <div>
-                                        <p className="text-sm font-medium leading-none">{f.name}</p>
-                                        <p className="text-xs text-muted-foreground">{f.size}</p>
-                                    </div>
-                                </div>
-                                <Button variant="outline" size="sm" className="gap-2" aria-disabled>
-                                    <Download className="h-4 w-4"/> Download
-                                </Button>
-                            </li>
-                        ))}
-                        </ul>
-                    </CardContent>
-                </Card>
-            </TabsContent>
-            
-            <TabsContent value="notes" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Attach notes</CardTitle>
-                  <CardDescription>Your notes are private. Autosave coming later.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Input placeholder="Title (optional)" />
-                  <Textarea placeholder="Type your lesson notes here..." className="min-h-[160px] resize-y" />
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline">Clear</Button>
-                    <Button>Save draft</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="resources" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Extra resources</CardTitle>
-                  <CardDescription>Helpful links and references for deeper learning.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {lesson.resources.map((r) => (
-                    <a key={r.id} href={r.href} className="flex items-center justify-between rounded-md border p-3 transition hover:bg-muted/70">
-                      <span className="text-sm">{r.label}</span>
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          {/* Workspace mock (optional area from sketch) */}
-          
-
-          {/* Prev/Next navigation */}
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" className="gap-2"><ChevronLeft className="h-4 w-4"/> Previous</Button>
-            <Button className="gap-2">Next lesson <ChevronRight className="h-4 w-4"/></Button>
-          </div>
-        </div>
-
-        {/* RIGHT: Sidebar */}
-        <aside className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">{course.unitTitle}</CardTitle>
-                <Badge variant="secondary">{course.progress}%</Badge>
-              </div>
-              <CardDescription>Progress through the unit.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Progress value={course.progress} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Lessons</CardTitle>
-              <CardDescription>Current lesson is highlighted.</CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[420px]">
-                <ul className="divide-y">
-                  {unitLessons.map((l) => (
-                    <li key={l.id} className={`flex items-center justify-between px-4 py-3 ${l.status === "current" ? "bg-muted/60" : ""}`}>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{l.title}</p>
-                        <p className="text-xs text-muted-foreground">{l.duration}</p>
-                      </div>
-                      {l.status === "done" && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-                      {l.status === "current" && <Badge>Now</Badge>}
-                      {l.status === "locked" && <Badge variant="secondary">Locked</Badge>}
-                    </li>
-                  ))}
-                </ul>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-
-          
-        </aside>
+    <div className="flex-1 flex flex-col px-2 pb-2 md:px-5 md:pb-5 max-w-5xl mx-auto w-full">
+      {/* Navigation Header */}
+      <div className="mb-4">
+        <Link href={`/course/${courseId}`}>
+          <Button variant="ghost" className="gap-2 pl-0 hover:pl-2 transition-all">
+            <ChevronLeft size={16} />
+            Back to Course
+          </Button>
+        </Link>
       </div>
+
+      <Card className="flex-1">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
+              {lesson.unit?.title ? `Unit: ${lesson.unit.title}` : "Lesson"}
+            </span>
+            <CardTitle className="text-3xl font-bold">{lesson.title}</CardTitle>
+          </div>
+          {lesson.description && (
+            <CardDescription className="text-lg mt-2">
+              {lesson.description}
+            </CardDescription>
+          )}
+        </CardHeader>
+
+        <Separator />
+
+        <CardContent className="pt-6">
+            {/* 4. Render the Markdown */}
+            {lesson.mediaType === "markdown" ? (
+                <MarkdownViewer content={contentString} />
+            ) : (
+                <div className="p-6 bg-amber-50 border border-amber-200 rounded-md text-amber-800">
+                    <p className="font-semibold">Media Type: {lesson.mediaType}</p>
+                    <p>This lesson content is not markdown. Custom rendering for {lesson.mediaType} is needed.</p>
+                </div>
+            )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
