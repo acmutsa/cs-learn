@@ -16,6 +16,15 @@ export type TagModalProps = {
   onTagCreated?: () => void;
 };
 
+
+export type Users = {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+};
+
+
 export type AllTags = {
   tagName: string;
 }
