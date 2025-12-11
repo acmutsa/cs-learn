@@ -1,15 +1,12 @@
 "use client";
-
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
-
 import { lessonFormSchema } from "@/lib/validations/lesson";
 import { updateLessonAction } from "@/actions/admin/lesson";
-
 import {
   Form,
   FormField,
@@ -28,81 +25,44 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import type { UpdateUnit } from "@/lib/types";
 
-// extend the base lesson schema to include ID for updates
-const editLessonSchema = lessonFormSchema.extend({
-  id: z.number(),
-});
-
-type EditLessonFormValues = z.infer<typeof editLessonSchema>;
-
-type UnitOption = {
-  id: number;
-  title: string | null;
-};
-
-type EditLessonFormProps = {
-  lesson: {
-    id: number;
-    unitId: number;
-    title: string;
-    description: string | null;
-    mediaType: string;
-    metadata: string;
-  };
+export default function EditLessonForm({ lesson, courseId, units }: {
+  lesson: any,
   courseId: number;
-  units: UnitOption[];
-};
-
-// helper to safely parse metadata JSON
-function parseMetadata(metadata: string): { contentUrl?: string } {
-  try {
-    return JSON.parse(metadata);
-  } catch {
-    return {};
-  }
-}
-
-export default function EditLessonForm({
-  lesson,
-  courseId,
-  units,
-}: EditLessonFormProps) {
+  units: UpdateUnit[];
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
 
-  // parse contentUrl from metadata (stored as JSON string)
-  const meta = parseMetadata(lesson.metadata);
+  const editLessonFormSchema = lessonFormSchema.safeExtend({
+    lessonId: z.number().min(1),
+  });
+  type EditLessonFormValues = z.infer<typeof editLessonFormSchema>;
 
-  // initialize the form with existing lesson values
-  // "as any" fixes typescript errors between React hook form and Zod
   const form = useForm<EditLessonFormValues>({
-    resolver: zodResolver(editLessonSchema) as any,
+    resolver: zodResolver(editLessonFormSchema),
     defaultValues: {
-      id: lesson.id,
+      lessonId: lesson.id,
       title: lesson.title,
       description: lesson.description ?? "",
       unitId: lesson.unitId,
       courseId: courseId,
-      mediaType: lesson.mediaType as EditLessonFormValues["mediaType"],
-      contentUrl: meta.contentUrl ?? "",
+      mediaType: lesson.mediaType,
+      content: lesson.content,
     },
-  }) as any;
+  });
+  const mediaType = form.watch("mediaType");
 
-  // handle form submission
   const onSubmit = (values: EditLessonFormValues) => {
     setServerError("");
-
-    // wrap in transition for smooth pending state
     startTransition(async () => {
       const result = await updateLessonAction(values);
-
       if (result?.serverError) {
         setServerError(result.serverError);
         return;
       }
-
       toast.success("Lesson updated successfully!");
       router.push(`/admin/courses/${courseId}`);
     });
@@ -134,8 +94,6 @@ export default function EditLessonForm({
             </FormItem>
           )}
         />
-
-        {/* lesson description textarea */}
         <FormField
           control={form.control}
           name="description"
@@ -154,8 +112,6 @@ export default function EditLessonForm({
             </FormItem>
           )}
         />
-
-        {/* unit selection dropdown */}
         <FormField
           control={form.control}
           name="unitId"
@@ -184,8 +140,6 @@ export default function EditLessonForm({
             </FormItem>
           )}
         />
-
-        {/* content type dropdown - determines how content is rendered */}
         <FormField
           control={form.control}
           name="mediaType"
@@ -205,41 +159,39 @@ export default function EditLessonForm({
                 <SelectContent>
                   <SelectItem value="youtube">YouTube video</SelectItem>
                   <SelectItem value="markdown">Markdown page</SelectItem>
-                  <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
-                  <SelectItem value="audio">Audio</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {/* content URL input */}
         <FormField
           control={form.control}
-          name="contentUrl"
+          name="content"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Content URL</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="https://..."
-                  disabled={isPending}
-                  {...field}
-                />
+                {mediaType === "youtube" ? (
+                  <Input
+                    placeholder="https://..."
+                    disabled={isPending}
+                    {...field}
+                  />
+                ) : (
+                  <Textarea
+                    placeholder="Enter your detailed lesson content here using Markdown syntax..."
+                    disabled={isPending}
+                    {...field}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {/* hidden fields for IDs */}
-        <input type="hidden" {...form.register("id")} />
+        <input type="hidden" {...form.register("lessonId")} />
         <input type="hidden" {...form.register("courseId")} />
-
-        {/* action buttons */}
         <div className="flex items-center gap-2 pt-2">
           <Button
             type="button"

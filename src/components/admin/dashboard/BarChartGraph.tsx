@@ -34,8 +34,8 @@ export default function BarChartGraph({ data }) {
     
   return (
     <GraphCard title="Courses per Tag" description="">
-      <ResponsiveContainer width="100%" height="100%" >
-        <ChartContainer config={chartConfig}>
+      <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer config={chartConfig} className="w-full h-full">
           <BarChart data={data}>
             <XAxis dataKey="tag" />
             <YAxis

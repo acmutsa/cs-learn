@@ -6,6 +6,7 @@ import { lessonFormSchema } from "@/lib/validations/lesson";
 import { actionClient, adminClient } from "@/lib/safe-action";
 import { eq, asc, sql } from "drizzle-orm";
 import { z } from "zod";
+import sanitizeHtml from "sanitize-html";
 
 export const createLessonAction = actionClient
   .schema(lessonFormSchema)
@@ -16,38 +17,32 @@ export const createLessonAction = actionClient
       unitId,
       courseId,
       mediaType,
-      contentUrl,
+      content,
     } = parsedInput;
+
+    const safeContent = sanitizeHtml(content, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
 
     const [maxPosition] = await db
       .select({ maxPosition: sql<number>`MAX(${lessons.position})` })
       .from(lessons)
       .where(eq(lessons.unitId, unitId))
-
     const newPosition = (maxPosition?.maxPosition ?? 0) + 1;
-
-    // store contentUrl in metadata JSON (contentUrl is not a DB column)
-    const metadata = JSON.stringify({
-      title,
-      description: description ?? "",
-      contentUrl,
-    });
-
     await db.insert(lessons).values({
       unitId,
       title,
       description,
       mediaType,
-      metadata,
+      content: safeContent,
       position: newPosition,
     });
-
     revalidatePath(`/admin/courses/${courseId}`);
 
     return { success: true };
 });
 
-// fetch lessons for a course (exclude content blob for client component compatibility)
 export async function getLessonsForCourse(courseId: number) {
   const rows = await db
     .select({
@@ -56,7 +51,7 @@ export async function getLessonsForCourse(courseId: number) {
       title: lessons.title,
       description: lessons.description,
       mediaType: lessons.mediaType,
-      metadata: lessons.metadata,
+      content: lessons.content,
       position: lessons.position,
       createdAt: lessons.createdAt,
       updatedAt: lessons.updatedAt,
@@ -69,26 +64,15 @@ export async function getLessonsForCourse(courseId: number) {
   return rows;
 }
 
-// Update an existing lesson's details
 export const updateLessonAction = adminClient
-  // extend lesson schema to require lesson ID
   .schema(
-    lessonFormSchema.extend({
-      id: z.number(),
+    lessonFormSchema.safeExtend({
+      lessonId: z.number(),
     })
   )
   .action(async ({ parsedInput }) => {
-    const { id, title, description, unitId, courseId, mediaType, contentUrl } =
+    const { lessonId, title, description, unitId, courseId, mediaType, content } =
       parsedInput;
-
-    // build metadata JSON to store contentUrl and other info
-    const metadata = JSON.stringify({
-      title,
-      description: description ?? "",
-      contentUrl,
-    });
-
-    // update the lesson in the database
     await db
       .update(lessons)
       .set({
@@ -96,22 +80,18 @@ export const updateLessonAction = adminClient
         description,
         unitId,
         mediaType,
-        metadata,
+        content,
       })
-      .where(eq(lessons.id, id));
-
-    // revalidate the course page so it shows updated data
+      .where(eq(lessons.id, lessonId));
     revalidatePath(`/admin/courses/${courseId}`);
-
+    
     return { success: true };
   });
 
-// Fetch a single lesson by ID (for loading into edit form)
 export async function getLessonById(lessonId: number) {
   const [lesson] = await db
     .select()
     .from(lessons)
     .where(eq(lessons.id, lessonId));
-
   return lesson ?? null;
 }

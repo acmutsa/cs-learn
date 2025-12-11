@@ -58,16 +58,17 @@ export default function CreateLessonForm({
   // Relaxed typing around resolver to avoid RHF + zod generic noise,
   // while still keeping LessonFormSchema as the form's value type.
   const form = useForm<LessonFormValues>({
-    resolver: zodResolver(lessonFormSchema) as any,
+    resolver: zodResolver(lessonFormSchema),
     defaultValues: {
       title: "",
       description: "",
       unitId: 0,
       courseId: id,
       mediaType: "markdown",
-      contentUrl: "",
+      content: "",
     },
-  }) as any;
+  });
+  const mediaType = form.watch("mediaType");
 
   const { execute, status, result } = useAction(createLessonAction, {
     onSuccess: ({ data }) => {
@@ -170,10 +171,6 @@ export default function CreateLessonForm({
                     <SelectContent>
                       <SelectItem value="youtube">YouTube video</SelectItem>
                       <SelectItem value="markdown">Markdown page</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
-                      <SelectItem value="image">Image</SelectItem>
-                      <SelectItem value="audio">Audio</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -183,15 +180,22 @@ export default function CreateLessonForm({
 
             <FormField
               control={form.control}
-              name="contentUrl"
+              name="content"
               render={({ field }) => (
                 <FormItem className="md:col-span-1">
                   <FormLabel>Content URL</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://..."
-                      {...field}
-                    />
+                    {mediaType === "youtube" ? (
+                      <Input
+                        placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        {...field}
+                      />
+                    ) : (
+                      <Textarea
+                        placeholder="Enter your detailed lesson content here using Markdown syntax..."
+                        {...field}
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,19 +1,13 @@
-// src/app/course/[courseId]/[lessonId]/page.tsx
-
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { eq } from "drizzle-orm";
 import { ChevronLeft } from "lucide-react";
-
-// DB Imports
-import { db } from "@/db"; // Ensure this path points to your Drizzle client instance
-import { lessons } from "@/db/schema";
-
-// Components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { MarkdownViewer } from "@/components/client/markdown-viewer"; // Based on your screenshot folder structure
+import { getLessonById } from "@/actions/admin/lesson";
+import { getUnitById } from "@/actions/admin/units";
+import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
 
 interface LessonPageProps {
   params: Promise<{
@@ -22,49 +16,37 @@ interface LessonPageProps {
   }>;
 }
 
+function extractYouTubeId(url: string): string | null {
+  const regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
 export default async function LessonPage({ params }: LessonPageProps) {
-  // 1. Await params (Next.js 15 requirement)
   const { courseId, lessonId } = await params;
-  const lId = parseInt(lessonId);
+  const course_id = Number(courseId);
+  const lesson_id = Number(lessonId);
 
-  if (isNaN(lId)) return notFound();
-
-  // 2. Fetch the lesson from the database
-  // We use findFirst to get the specific lesson data
-  const lesson = await db.query.lessons.findFirst({
-    where: eq(lessons.id, lId),
-    with: {
-      unit: true, // Fetch unit info for context (optional)
-    },
-  });
-
+  if (isNaN(course_id) || isNaN(lesson_id)) {
+    return notFound();
+  }
+  const lesson = await getLessonById(lesson_id);
   if (!lesson) {
     return notFound();
   }
+  const unit = await getUnitById({ unitId: lesson.unitId });
 
-  // 3. Convert the BLOB content to a String
-  // The schema defines content as 'blob()', so we must decode it.
-  let contentString = "";
-  
-  if (lesson.content) {
-    if (typeof lesson.content === 'string') {
-       // Safety check: if it was somehow stored as string
-       contentString = lesson.content;
-    } else if (Buffer.isBuffer(lesson.content)) {
-       // Standard Node.js Buffer
-       contentString = lesson.content.toString("utf-8");
-    } else {
-       // Fallback for Uint8Array (common in some Drizzle adapters)
-       contentString = new TextDecoder().decode(lesson.content as unknown as Uint8Array);
-    }
-  }
+  const isMarkdown = lesson.mediaType === "markdown";
+  const isYouTube = lesson.mediaType === "youtube";
+
+  const youtubeId = isYouTube ? extractYouTubeId(lesson.content) : null;
 
   return (
     <div className="flex-1 flex flex-col px-2 pb-2 md:px-5 md:pb-5 max-w-5xl mx-auto w-full">
       {/* Navigation Header */}
       <div className="mb-4">
         <Link href={`/course/${courseId}`}>
-          <Button variant="ghost" className="gap-2 pl-0 hover:pl-2 transition-all">
+          <Button variant="ghost" className="cursor-pointer gap-2 pl-0 hover:pl-2 transition-all">
             <ChevronLeft size={16} />
             Back to Course
           </Button>
@@ -75,7 +57,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <CardHeader className="pb-4">
           <div className="flex flex-col gap-1">
             <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
-              {lesson.unit?.title ? `Unit: ${lesson.unit.title}` : "Lesson"}
+              {`Unit: ${unit.data?.position} ${unit.data?.title}`}
             </span>
             <CardTitle className="text-3xl font-bold">{lesson.title}</CardTitle>
           </div>
@@ -89,15 +71,36 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <Separator />
 
         <CardContent className="pt-6">
-            {/* 4. Render the Markdown */}
-            {lesson.mediaType === "markdown" ? (
-                <MarkdownViewer content={contentString} />
-            ) : (
-                <div className="p-6 bg-amber-50 border border-amber-200 rounded-md text-amber-800">
-                    <p className="font-semibold">Media Type: {lesson.mediaType}</p>
-                    <p>This lesson content is not markdown. Custom rendering for {lesson.mediaType} is needed.</p>
-                </div>
-            )}
+          {isMarkdown && (
+            <div className="prose prose-sm max-w-none flex-1 border p-2 rounded-md 
+              prose-headings:underline prose-headings:font-mono
+              prose-h1:mb-4
+              prose-h2:mb-3
+              prose-p:mb-2
+              prose-li:mb-1 prose-li:font-mono
+              prose-code:before:content-[''] prose-code:after:content-['']
+              prose-code:p-1 prose-code:rounded-md
+            ">
+              <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+                {lesson.content}
+              </ReactMarkdown>
+            </div>
+          )}
+          {isYouTube && youtubeId && (
+            <div className="aspect-video">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${youtubeId}`}
+                title={`${lesson.title} - Video Player`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+          {!isMarkdown && !isYouTube && (
+            <div>Missing Content</div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -20,10 +20,9 @@ export default async function Navigation() {
   });
   const user = session?.user;
   const isSignedIn = Boolean(user);
-  //const isAdmin = user?.role === "admin" ? true : false;
-  const isAdmin = ["admin", "super admin"].includes(user?.role ?? "");
+  const isAdmin = user?.role === "admin" ? true : false;
 
-  const avatarSrc = user?.image ?? "/user.png"; //default
+  const avatarSrc = user?.image ?? "/user.png";
   const displayName = user?.name ?? "User";
   const email = user?.email ?? "";
 
@@ -41,7 +40,7 @@ export default async function Navigation() {
           {isSignedIn && user ? (
             <>
               {isAdmin && (
-                <li>
+                <li className="hidden md:flex">
                   <Button variant={"secondary"} className="text-md md:text-lg text-foreground hover:text-gray-300 transition-all duration-300">
                     <Link
                       href="/admin"
@@ -49,14 +48,14 @@ export default async function Navigation() {
                   </Button>
                 </li>
               )}
-              <li>
+              <li className="hidden md:flex">
                 <Button variant="outline" className="text-md md:text-lg text-foreground hover:text-gray-300 transition-all duration-300">
                   <Link
                   href="/explore"
                   >Explore</Link>
                 </Button>
               </li>
-              <li>
+              <li className="hidden md:flex">
                 <Button variant="outline" className="text-md md:text-lg text-foreground  hover:text-gray-300 transition-all duration-300">
                   <Link href="/categories">Categories</Link>
                 </Button>
@@ -80,13 +79,22 @@ export default async function Navigation() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">Profile</Link>
+                      <Link href="/profile" className="cursor-pointer">Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/courses">My Courses</Link>
+                      <Link href="/admin" className="bg-secondary cursor-pointer">Admin</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/history">History</Link>
+                      <Link href="/explore" className="cursor-pointer">Explore</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/categories" className="cursor-pointer">Categories</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/courses" className="cursor-pointer">My Courses</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/history" className="cursor-pointer">History</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>

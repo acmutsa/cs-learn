@@ -78,7 +78,7 @@ export default async function CoursePage({ params }: CourseIdPageProps) {
           <CardDescription>{course.description}</CardDescription>
           <CardAction>
             <Link href={`/course/${id}/${firstLesson}`}>
-              <Button variant={"outline"}>Get Started</Button>
+              <Button className="cursor-pointer" variant={"outline"}>Get Started</Button>
             </Link>
           </CardAction>
         </CardHeader>
@@ -87,8 +87,8 @@ export default async function CoursePage({ params }: CourseIdPageProps) {
           <Accordion type="multiple" className="flex flex-col gap-4">
             {units.map((unit, index) => (
               <AccordionItem value={`${unit.id}`} key={unit.id}>
-                <AccordionTrigger className="w-full">
-                  <div className="flex-1 min-w-0 flex gap-2 cursor-pointer">
+                <AccordionTrigger className="w-full cursor-pointer">
+                  <div className="flex-1 min-w-0 flex gap-2">
                     <span className="font-bold shrink-0">
                       {`Unit ${unit.position}:`}
                     </span>

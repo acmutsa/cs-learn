@@ -1,7 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import Navigation from "@/components/shared/navbar";
-import AutoSignInTestComponent from "@/components/auth/autoSignIn";
 
 export default function Home() {
   return (

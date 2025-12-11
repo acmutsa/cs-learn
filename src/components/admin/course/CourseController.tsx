@@ -125,8 +125,8 @@ export default function CourseController({courseId, units, lessons }: CourseCont
   const lessonsByUnit = buildLessonsByUnit(lessonList);
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 h-full">
-      <div className="flex flex-col gap-4 md:w-1/4 order-2 md:order-1 h-full">
+    <div className="flex flex-col md:flex-row gap-2">
+      <div className="flex flex-col gap-4 md:w-1/4 order-2 md:order-1">
         <div className="h-[80vh] overflow-y-auto">
           <DragDropContext onDragEnd={onDragEnd}>
             <Accordion type="multiple" value={openUnits} onValueChange={setOpenUnits}>
@@ -147,7 +147,7 @@ export default function CourseController({courseId, units, lessons }: CourseCont
                                   {...unitProvided.dragHandleProps}
                                   className="font-bold cursor-grab border-b pr-4 text-start"
                                 >
-                                  {unit.position}. {unit.title}
+                                  {`${unit.position}. ${unit.title}`}
                                 </span>
                                 <Link href={`/admin/courses/${courseId}/units/edit/${unit.id}`}>
                                   <button className="text-sm text-blue-600 cursor-pointer hover:underline">Edit Unit</button>

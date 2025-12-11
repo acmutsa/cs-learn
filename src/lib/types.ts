@@ -49,3 +49,12 @@ export type DashboardData = {
 export type CourseIdPageProps = {
   params: Promise<{ courseId: string }>;
 };
+
+export type UpdateUnit = {
+  id: number;
+  courseId: number;
+  title: string | null;
+  position: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
