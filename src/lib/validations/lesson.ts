@@ -9,6 +9,8 @@ export const lessonFormSchema = z.object({
   mediaType: z.enum(mediaTypeValues),
   contentUrl: z
     .string()
-    .url("Must be a valid URL (starts with http:// or https://)"),
+    .url("Must be a valid URL (starts with http:// or https://)")
+    .optional()
+    .or(z.literal("")),
 });
 export type LessonFormValues = z.infer<typeof lessonFormSchema>;
