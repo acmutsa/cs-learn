@@ -81,9 +81,11 @@ export default async function Navigation() {
                     <DropdownMenuItem asChild>
                       <Link href="/profile" className="cursor-pointer">Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin" className="bg-secondary cursor-pointer">Admin</Link>
-                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="bg-secondary cursor-pointer">Admin</Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link href="/explore" className="cursor-pointer">Explore</Link>
                     </DropdownMenuItem>
