@@ -16,7 +16,7 @@ export const createLessonAction = actionClient
       unitId,
       courseId,
       mediaType,
-      contentUrl,
+      content,
     } = parsedInput;
 
     const [maxPosition] = await db
@@ -26,18 +26,12 @@ export const createLessonAction = actionClient
 
     const newPosition = (maxPosition?.maxPosition ?? 0) + 1;
 
-    const metadata = JSON.stringify({
-      title,
-      description: description ?? "",
-    });
-
     await db.insert(lessons).values({
       unitId,
       title,
       description,
-      mediaType,   // now real value from the form
-      metadata,
-      contentUrl,  // real URL from the form
+      mediaType,
+      content,
       position: newPosition,
       // contentBlobId stays null
     });
@@ -56,7 +50,6 @@ export async function getLessonsForCourse(courseId: number): Promise<Lesson[]> {
       description: lessons.description,
       mediaType: lessons.mediaType,
       content: lessons.content,
-      metadata: lessons.metadata,
       position: lessons.position,
       createdAt: lessons.createdAt,
       updatedAt: lessons.updatedAt,

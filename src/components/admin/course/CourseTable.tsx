@@ -85,7 +85,7 @@ const columns: ColumnDef<CourseWithData>[] = [
       const course = row.original;
       return (
         <div className="text-left pl-3">
-          <Link className="hover:underline" href={`/admin/courses/${course.id}`}>{row.getValue("title")}</Link>
+          <Link className="hover:text-blue-500 underline" href={`/admin/courses/${course.id}`}>{row.getValue("title")}</Link>
         </div>
       );
     },
@@ -99,7 +99,7 @@ const columns: ColumnDef<CourseWithData>[] = [
         </div>
       )
     },
-    cell: ({ row }) => <div className="text-left">{row.getValue("description")}</div>,
+    cell: ({ row }) => <div className="text-left scroll-x-auto w-[100ch] overflow-x-scroll">{row.getValue("description")}</div>,
   },
   {
     accessorKey: "difficulty",
