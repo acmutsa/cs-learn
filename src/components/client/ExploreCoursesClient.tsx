@@ -87,7 +87,7 @@ export function ExploreCoursesClient({
                 {difficultyLabel}
               </Badge>
             </div>
-            {date && (
+            {/* {date && (
               <p className="text-[11px] text-muted-foreground">
                 Created on{" "}
                 {date.toLocaleDateString(undefined, {
@@ -96,7 +96,7 @@ export function ExploreCoursesClient({
                   year: "numeric",
                 })}
               </p>
-            )}
+            )} */}
           </CardHeader>
           <CardContent>
             <CardDescription className="line-clamp-2 text-sm">

@@ -37,7 +37,7 @@ export default function LessonOverview({ courseId, lesson, unit }: LessonOvervie
         <p className="font-bold">Description:<span className="font-medium">{` ${lesson.description}`}</span></p>
       </div>
       {isMarkdown && (
-        <div className="prose prose-sm max-w-none flex-1 border p-2 rounded-md 
+        <div className="prose max-w-none flex-1 border p-2 rounded-md 
           prose-headings:underline prose-headings:font-mono
           prose-h1:mb-4
           prose-h2:mb-3

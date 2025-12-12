@@ -97,14 +97,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
           <CardContent className="pt-6">
             {isMarkdown && (
-              <div className="prose prose-sm md:prose-base max-w-none flex-1 border p-4 rounded-md 
+              <div className="prose max-w-none flex-1 border p-2 rounded-md 
                 prose-headings:underline prose-headings:font-mono
                 prose-h1:mb-4
                 prose-h2:mb-3
                 prose-p:mb-2
                 prose-li:mb-1 prose-li:font-mono
                 prose-code:before:content-[''] prose-code:after:content-['']
-                prose-code:bg-slate-100 prose-code:p-1 prose-code:rounded-md
+                prose-code:p-1 prose-code:rounded-md
               ">
                 <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
                   {currentLesson.content}

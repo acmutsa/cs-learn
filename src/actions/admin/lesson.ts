@@ -21,8 +21,9 @@ export const createLessonAction = actionClient
     } = parsedInput;
 
     const safeContent = sanitizeHtml(content, {
-      allowedTags: [],
-      allowedAttributes: {},
+      allowedTags: false,
+      allowedAttributes: false,
+      allowVulnerableTags: true,
     });
 
     const [maxPosition] = await db
