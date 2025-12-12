@@ -92,12 +92,12 @@ export default async function Navigation() {
                     <DropdownMenuItem asChild>
                       <Link href="/categories" className="cursor-pointer">Categories</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    {/* <DropdownMenuItem asChild>
                       <Link href="/courses" className="cursor-pointer">My Courses</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    </DropdownMenuItem> */}
+                    {/* <DropdownMenuItem asChild>
                       <Link href="/history" className="cursor-pointer">History</Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                       <LogoutButton />

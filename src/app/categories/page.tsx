@@ -10,7 +10,7 @@ export default async function CategoriesPage() {
   const tags = await getCoursesGroupedByTag();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10 space-y-10">
+    <main className="mx-auto max-w-6xl px-6 py-10 space-y-10 w-full">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
         <p className="text-sm text-slate-600">

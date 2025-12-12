@@ -138,9 +138,9 @@ export function ExploreCoursesClient({
 
       {/* Tabs */}
       <Tabs defaultValue="popular" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+        <TabsList className="grid w-full grid-cols-2 sm:w-auto">
           <TabsTrigger value="popular">Popular</TabsTrigger>
-          <TabsTrigger value="in-progress">In progress</TabsTrigger>
+          {/* <TabsTrigger value="in-progress">In progress</TabsTrigger> */}
           <TabsTrigger value="all">All courses</TabsTrigger>
         </TabsList>
 
@@ -159,7 +159,7 @@ export function ExploreCoursesClient({
         </TabsContent>
 
         {/* In progress */}
-        <TabsContent value="in-progress" className="mt-4 space-y-4">
+        {/* <TabsContent value="in-progress" className="mt-4 space-y-4">
           {inProgressCourses.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               You don&apos;t have any courses in progress yet. Start any course
@@ -170,7 +170,7 @@ export function ExploreCoursesClient({
               {inProgressCourses.map(renderCourseCard)}
             </div>
           )}
-        </TabsContent>
+        </TabsContent> */}
 
         {/* All courses with pagination */}
         <TabsContent value="all" className="mt-4 space-y-4">

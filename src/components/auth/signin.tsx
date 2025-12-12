@@ -32,7 +32,7 @@ export default function SignIn() {
       return;
     } else {
       toast.success(result.message)
-      router.push("/home");
+      router.push("/explore");
       router.refresh();
     }
   }
